@@ -29,7 +29,7 @@ import { company, timeline, capabilities, testimonials } from '../data/site';
   <section class="section vision">
     <div class="wrap">
       <p class="eyebrow" data-reveal>Vision</p>
-      <p class="vision__q" data-split>To be a process partner to our customers in resins and their formulations, <span class="amber">rather than only a vendor.</span></p>
+      <p class="vision__q" data-split>To be a process partner to our customers in resins and their formulations, <span class="accent">rather than only a vendor.</span></p>
     </div>
   </section>
 
@@ -59,12 +59,12 @@ import { company, timeline, capabilities, testimonials } from '../data/site';
     </div>
   </section>
 
-  <section class="section lead">
+  <section class="section lead" id="leadership">
     <div class="wrap split">
       <div>
         <p class="eyebrow" data-reveal>Leadership</p>
         <h2 class="h-l" data-split>{company.md}</h2>
-        <p class="mono amber" data-reveal>Managing Director</p>
+        <p class="mono accent" data-reveal>Managing Director</p>
       </div>
       <div class="prose" data-reveal>
         <p>The company is run by experienced professionals at every level, with in-depth process knowledge and close attention to customer requirements. Alongside quality for customers, we treat skills development and growth for our own people as a priority.</p>
@@ -80,19 +80,19 @@ import { company, timeline, capabilities, testimonials } from '../data/site';
   .prose .big { color: var(--ink); font-size: clamp(1.2rem, 1.8vw, 1.5rem); line-height: 1.45; }
   .caps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-2); }
   .caps li { display: flex; gap: 20px; align-items: baseline; padding: 22px 0; border-bottom: 1px solid var(--line-2); font-size: clamp(1.2rem, 2vw, 1.7rem); font-weight: 700; font-stretch: 112%; }
-  .caps .mono { color: var(--amber); }
+  .caps .mono { color: var(--accent); }
   .vision { border-block: 1px solid var(--line-2); }
   .vision__q { font-size: clamp(1.8rem, 4.4vw, 4rem); font-weight: 800; font-stretch: 115%; line-height: 1.05; letter-spacing: -.02em; margin: 24px 0 0; max-width: 20ch; }
   .tl h2 { margin: 16px 0 48px; }
   .tl__list { list-style: none; margin: 0; padding: 0 0 0 0; position: relative; }
   .tl__list::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--line-2); }
   .tl__list li { display: grid; grid-template-columns: 1fr; gap: 6px; padding: 26px 0 26px 32px; position: relative; border-bottom: 1px solid var(--line-3); }
-  .tl__list li::before { content: ''; position: absolute; left: -4px; top: 36px; width: 9px; height: 9px; border: 1px solid var(--amber); background: var(--bg); transform: rotate(45deg); }
+  .tl__list li::before { content: ''; position: absolute; left: -4px; top: 36px; width: 9px; height: 9px; border: 1px solid var(--accent); background: var(--bg); transform: rotate(45deg); }
   @media (min-width: 760px) { .tl__list li { grid-template-columns: 180px 1fr; } }
-  .tl__y { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900; font-stretch: 125%; line-height: 1; color: transparent; -webkit-text-stroke: 1px var(--amber); }
+  .tl__y { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900; font-stretch: 125%; line-height: 1; color: transparent; -webkit-text-stroke: 1px var(--accent); }
   .tl__list h3 { font-size: 1.35rem; font-stretch: 112%; }
   .tl__list p { color: var(--ink-2); margin: 6px 0 0; }
   .lead { border-top: 1px solid var(--line-2); }
-  .pull { margin: 28px 0 0; padding: 22px 0 0 22px; border-left: 1px solid var(--amber); color: var(--ink); font-size: 1.1rem; }
+  .pull { margin: 28px 0 0; padding: 22px 0 0 22px; border-left: 1px solid var(--accent); color: var(--ink); font-size: 1.1rem; }
   .pull footer { color: var(--ink-3); margin-top: 12px; }
 </style>

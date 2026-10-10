@@ -4,10 +4,6 @@ import { Flip } from 'gsap/Flip';
 
 gsap.registerPlugin(ScrollTrigger, Flip);
 
-const C = Math.cos(Math.PI / 6);
-const P = (x: number, y: number, z: number) => [(x - y) * C, (x + y) * 0.5 - z];
-const poly = (pts: number[][]) => 'M' + pts.map((p) => P(p[0], p[1], p[2]).map((n) => n.toFixed(2)).join(',')).join('L') + 'Z';
-
 let ctx: gsap.Context | null = null;
 let cleanups: (() => void)[] = [];
 const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s) as NodeListOf<T>);
@@ -22,13 +18,14 @@ document.addEventListener('astro:before-swap', () => {
 export function boot() {
   ctx = gsap.context(() => {
     nav();
+    search();
+    carousels();
     enquiry();
     lightbox();
     finder();
     const rm = reduced();
     if (rm) {
       gsap.set('[data-reveal]', { opacity: 1, y: 0 });
-      heroStatic();
       $$('[data-count]').forEach((el) => (el.textContent = el.dataset.count!));
       return;
     }
@@ -36,10 +33,8 @@ export function boot() {
     drawSvgs();
     reveals();
     counters();
-    hero();
     tilt();
     parallax();
-    crosshair();
   });
   requestAnimationFrame(() => ScrollTrigger.refresh());
 }
@@ -69,13 +64,12 @@ function nav() {
   };
   el.classList.remove('open');
   document.body.style.overflow = '';
-  const tt = el.querySelector<HTMLButtonElement>('[data-theme-toggle]');
-  if (tt) tt.onclick = () => {
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((tt) => tt.onclick = () => {
     const d = document.documentElement;
     const dark = d.dataset.theme !== 'dark';
     if (dark) d.dataset.theme = 'dark'; else delete d.dataset.theme;
     try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch {}
-  };
+  });
 }
 
 /* ───────────────── split headings into masked words */
@@ -159,99 +153,173 @@ function reveals() {
 function counters() {
   $$('[data-count]').forEach((el) => {
     const end = +el.dataset.count!;
+    const dp = (el.dataset.count!.split('.')[1] || '').length;
     const o = { v: 0 };
     gsap.to(o, {
       v: end, duration: 2, ease: 'power3.out',
-      onUpdate: () => (el.textContent = Math.round(o.v).toLocaleString('en-IN')),
+      onUpdate: () => (el.textContent = dp ? o.v.toFixed(dp) : Math.round(o.v).toLocaleString('en-IN')),
       scrollTrigger: { trigger: el, start: 'top 90%', once: true },
     });
   });
 }
 
-/* ───────────────── hero pour/cure */
-function heroGeom() {
-  const svg = document.querySelector<SVGSVGElement>('.hero-scene');
-  if (!svg) return null;
-  const d = svg.dataset;
-  return {
-    svg, W: +d.w!, D: +d.d!, H: +d.h!, L: +d.level!, nx: +d.nx!, ny: +d.ny!, nz: +d.nz!,
-    side: svg.querySelector<SVGPathElement>('#resin-side')!,
-    top: svg.querySelector<SVGPathElement>('#resin-top')!,
-    sheen: svg.querySelector<SVGPathElement>('#resin-sheen')!,
-    stream: svg.querySelector<SVGLineElement>('#stream')!,
-    mark: svg.querySelector<SVGGElement>('#gauge-mark')!,
-    parts: Array.from(svg.querySelectorAll<SVGGElement>('.part')),
-  };
-}
-function setLevel(g: NonNullable<ReturnType<typeof heroGeom>>, h: number, sheenT = -1) {
-  const { W, D } = g;
-  if (h <= 0.01) { g.side.setAttribute('d', ''); g.top.setAttribute('d', ''); }
-  else {
-    g.side.setAttribute('d', poly([[W, 0, 0], [W, D, 0], [W, D, h], [W, 0, h]]) + poly([[0, D, 0], [W, D, 0], [W, D, h], [0, D, h]]));
-    g.top.setAttribute('d', poly([[0, 0, h], [W, 0, h], [W, D, h], [0, D, h]]));
-  }
-  g.parts.forEach((p) => p.classList.toggle('sub', h >= +p.dataset.top!));
-  const pct = Math.round((h / g.L) * 100);
-  g.mark.setAttribute('transform', `translate(0, ${-(h / g.H) * g.H})`);
-  const t = g.mark.querySelector('text');
-  if (t) t.textContent = String(pct).padStart(2, '0') + '%';
-  if (sheenT >= 0 && sheenT <= 1 && h > 0) {
-    const x = -40 + sheenT * (W + 80);
-    g.sheen.setAttribute('d', 'M' + [P(Math.max(0, Math.min(W, x)), 0, h), P(Math.max(0, Math.min(W, x - 60)), D, h)].map((p) => p.map((n) => n.toFixed(1)).join(',')).join('L'));
-    g.sheen.style.opacity = String(Math.sin(sheenT * Math.PI));
-  } else g.sheen.setAttribute('d', '');
-}
-function heroStatic() {
-  const g = heroGeom();
-  if (!g) return;
-  setLevel(g, g.L);
-  g.svg.classList.add('cured');
-  $$('[data-proof]').forEach((e) => (e.style.opacity = '1'));
-  const s = document.querySelector('[data-hero-state]');
-  if (s) s.textContent = 'CURED';
-}
-function hero() {
-  const g = heroGeom();
-  const sec = document.querySelector<HTMLElement>('[data-hero]');
-  if (!g || !sec) return;
-  const state = sec.querySelector<HTMLElement>('[data-hero-state]');
-  const proofs = $$('[data-proof]', sec);
-  gsap.set(proofs, { opacity: 0, x: 24 });
-  setLevel(g, 0);
-  const S = { level: 0, s1: 0, s2: 0, sheen: -1 };
-  const render = () => {
-    setLevel(g, S.level, S.sheen);
-    const y1 = g.ny + (g.nz - g.L) * S.s2;
-    const y2 = g.ny + (g.nz - S.level) * S.s1 + 0;
-    g.stream.setAttribute('y1', String(Math.min(y1 + (S.s2 > 0 ? 0 : 0), y2)));
-    g.stream.setAttribute('y2', String(y2));
-    g.stream.style.opacity = S.s1 > 0 && S.s2 < 1 ? '1' : '0';
-  };
-  const tl = gsap.timeline({
-    defaults: { ease: 'none' },
-    scrollTrigger: {
-      // phones: the hero is taller than the screen, so pin the drawing itself just under the nav
-      ...(innerWidth < 1000
-        ? { trigger: sec.querySelector('.hero__fig')!, start: 'top 84px', end: '+=160%' }
-        : { trigger: sec, start: 'top top', end: '+=190%' }),
-      pin: true, scrub: 0.8, anticipatePin: 1,
-      onUpdate: (st) => {
-        const p = st.progress;
-        g.svg.classList.toggle('cured', p > 0.72);
-        if (state) state.textContent = p < 0.04 ? 'READY' : p < 0.66 ? 'POURING' : p < 0.72 ? 'GELLING' : 'CURED';
-        sec.classList.toggle('is-cured', p > 0.72);
-      },
-    },
-    onUpdate: render,
+/* ───────────────── carousels (hero products, testimonials) */
+function carousels() {
+  $$('[data-carousel]').forEach((root) => {
+    const imgs = $$('[data-slide]', root);
+    const texts = $$('[data-slide-text]', root);
+    const tabs = $$('[data-tab]', root);
+    const n = Math.max(imgs.length, texts.length);
+    if (n < 2) return;
+    const interval = +(root.dataset.interval || 6500);
+    const scan = root.querySelector<HTMLElement>('[data-scan]');
+    const cur = root.querySelector<HTMLElement>('[data-cur]');
+    const toggleIco = root.querySelector<HTMLElement>('[data-toggle-ico]');
+    const rm = reduced();
+    let i = 0, paused = rm, hovering = false, bar: gsap.core.Tween | null = null;
+
+    const words = (el: Element) => {
+      const h = el.querySelector('.hc__h, [data-split-slide]');
+      if (!h || (h as HTMLElement).dataset.splitDone) return;
+      h.innerHTML = h.textContent!.split(/(\s+)/).map((t) => (/^\s+$/.test(t) ? t : `<span class="w"><span>${t}</span></span>`)).join('');
+      (h as HTMLElement).dataset.splitDone = '1';
+    };
+    texts.forEach(words);
+
+    const setTabs = (k: number) => tabs.forEach((t, j) => {
+      t.classList.toggle('on', j === k);
+      t.classList.toggle('done', j < k);
+      t.setAttribute('aria-selected', String(j === k));
+      gsap.set(t.querySelector('.hc__bar i, [data-bar]'), { scaleX: 0 });
+    });
+    const runBar = () => {
+      bar?.kill();
+      const el = tabs[i]?.querySelector('.hc__bar i, [data-bar]');
+      if (!el || paused || hovering) return;
+      bar = gsap.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: interval / 1000, ease: 'none', onComplete: () => go(i + 1) });
+    };
+    const go = (k: number, dir = 1) => {
+      const next = (k + n) % n;
+      if (next === i) return runBar();
+      const prevI = i; i = next;
+      if (cur) cur.textContent = String(i + 1).padStart(2, '0');
+      setTabs(i);
+      // text
+      texts.forEach((t, j) => {
+        const on = j === i;
+        t.toggleAttribute('aria-hidden', !on);
+        t.querySelectorAll('a').forEach((a) => (on ? a.removeAttribute('tabindex') : a.setAttribute('tabindex', '-1')));
+      });
+      const tOut = texts[prevI], tIn = texts[i];
+      if (rm) {
+        tOut?.classList.remove('on'); tIn?.classList.add('on');
+        imgs[prevI]?.classList.remove('on'); imgs[i]?.classList.add('on');
+        return;
+      }
+      if (tOut) gsap.to(tOut, { opacity: 0, y: -14 * dir, duration: 0.35, ease: 'power2.in', onComplete: () => { tOut.classList.remove('on'); gsap.set(tOut, { clearProps: 'all' }); } });
+      if (tIn) {
+        tIn.classList.add('on');
+        gsap.fromTo(tIn, { opacity: 0, y: 14 * dir }, { opacity: 1, y: 0, duration: 0.6, delay: 0.25, ease: 'expo.out' });
+        gsap.fromTo($$('.w > span', tIn), { yPercent: 110 }, { yPercent: 0, duration: 0.9, delay: 0.3, ease: 'expo.out', stagger: 0.05 });
+      }
+      // image: angled wipe + scan line + slow push-in
+      const out = imgs[prevI], inn = imgs[i];
+      if (inn) {
+        inn.classList.add('on');
+        gsap.set(inn, { zIndex: 1 });
+        if (out) gsap.set(out, { zIndex: 0 });
+        const from = dir > 0 ? 'polygon(100% 0, 100% 0, 85% 100%, 85% 100%)' : 'polygon(0 0, 0 0, 15% 100%, 15% 100%)';
+        const to = dir > 0 ? 'polygon(-20% 0, 100% 0, 100% 100%, -35% 100%)' : 'polygon(0 0, 120% 0, 135% 100%, 0 100%)';
+        gsap.fromTo(inn, { clipPath: from }, { clipPath: to, duration: 1.1, ease: 'expo.inOut', onComplete: () => { out?.classList.remove('on'); gsap.set(inn, { clearProps: 'clipPath' }); } });
+        const img = inn.querySelector('img');
+        if (img) gsap.fromTo(img, { scale: 1.12 }, { scale: 1, duration: 7, ease: 'power1.out' });
+        const chips = inn.querySelectorAll('.chip');
+        gsap.fromTo(chips, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5, delay: 0.8, stagger: 0.1 });
+        if (scan) gsap.fromTo(scan, { left: dir > 0 ? '100%' : '0%', opacity: 1 }, { left: dir > 0 ? '-2%' : '100%', opacity: 0, duration: 1.1, ease: 'expo.inOut' });
+      }
+      runBar();
+    };
+    tabs.forEach((t, j) => (t.onclick = () => go(j, j >= i ? 1 : -1)));
+    const prev = root.querySelector<HTMLButtonElement>('[data-prev]');
+    const next = root.querySelector<HTMLButtonElement>('[data-next]');
+    if (prev) prev.onclick = () => go(i - 1, -1);
+    if (next) next.onclick = () => go(i + 1, 1);
+    const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]');
+    const setPaused = (p: boolean) => {
+      paused = p;
+      if (toggleIco) toggleIco.textContent = p ? '▶' : '❚❚';
+      toggle?.setAttribute('aria-label', p ? 'Play autoplay' : 'Pause autoplay');
+      if (p) bar?.pause(); else runBar();
+    };
+    if (toggle) toggle.onclick = () => setPaused(!paused);
+    const stage = root.querySelector<HTMLElement>('[data-stage]') ?? root;
+    stage.addEventListener('pointerenter', () => { hovering = true; bar?.pause(); });
+    stage.addEventListener('pointerleave', () => { hovering = false; if (!paused) bar?.paused() ? bar.resume() : runBar(); });
+    root.addEventListener('focusin', () => bar?.pause());
+    root.addEventListener('focusout', () => { if (!paused && !hovering) bar?.resume(); });
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') go(i + 1, 1);
+      if (e.key === 'ArrowLeft') go(i - 1, -1);
+    });
+    // swipe
+    let sx = 0;
+    stage.addEventListener('touchstart', (e) => (sx = e.touches[0].clientX), { passive: true });
+    stage.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - sx;
+      if (Math.abs(dx) > 40) go(i + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+    });
+    // pause when off-screen
+    const io = new IntersectionObserver(([en]) => { if (!en.isIntersecting) bar?.pause(); else if (!paused && !hovering) bar?.resume(); });
+    io.observe(root);
+    cleanups.push(() => { io.disconnect(); bar?.kill(); });
+    setTabs(0);
+    if (!rm) {
+      const first = texts[0];
+      if (first) gsap.fromTo($$('.w > span', first), { yPercent: 110 }, { yPercent: 0, duration: 1.1, delay: 0.2, ease: 'expo.out', stagger: 0.06 });
+      const img = imgs[0]?.querySelector('img');
+      if (img) gsap.fromTo(img, { scale: 1.12 }, { scale: 1, duration: 7, ease: 'power1.out' });
+    }
+    runBar();
   });
-  tl.to(S, { s1: 1, duration: 0.06 })
-    .to(S, { level: g.L, duration: 0.58, ease: 'power1.inOut' })
-    .to(S, { s2: 1, duration: 0.06 })
-    .to(S, { sheen: 1, duration: 0.14, ease: 'power2.inOut' }, '+=0.02')
-    .to(proofs, { opacity: 1, x: 0, stagger: 0.04, duration: 0.08 }, '-=0.1')
-    .to({}, { duration: 0.08 });
-  // intro (not scrubbed)
-  gsap.from('[data-hero-in]', { opacity: 0, y: 30, duration: 1.2, ease: 'expo.out', stagger: 0.1, delay: 0.2 });
+}
+
+/* ───────────────── search overlay */
+function search() {
+  const dlg = document.querySelector<HTMLDialogElement>('[data-search]');
+  if (!dlg) return;
+  const q = dlg.querySelector<HTMLInputElement>('[data-search-q]')!;
+  const res = dlg.querySelector<HTMLElement>('[data-search-res]')!;
+  const idx: { t: string; s: string; h: string; k: string }[] = JSON.parse(dlg.querySelector('[data-search-index]')!.textContent!);
+  let sel = 0;
+  const esc = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+  const render = () => {
+    const term = q.value.trim().toLowerCase();
+    const hits = (term ? idx.filter((x) => (x.t + ' ' + x.s).toLowerCase().includes(term)) : idx.filter((x) => x.k === 'Page')).slice(0, 12);
+    sel = 0;
+    res.innerHTML = hits.length
+      ? hits.map((x, j) => `<li><a href="${x.h}" class="${j === 0 ? 'sel' : ''}"><b>${esc(x.t)}</b><span class="k">${x.k}</span>${x.s ? `<small>${esc(x.s)}</small>` : ''}</a></li>`).join('')
+      : `<li><a href="/contact/#enquiry"><b>No match. Ask the lab</b><span class="k">Enquiry</span><small>We formulate to order.</small></a></li>`;
+  };
+  const open = () => { render(); dlg.showModal(); q.focus(); if (!reduced()) gsap.fromTo(dlg, { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }); };
+  $$('[data-search-open]').forEach((b) => (b.onclick = open));
+  dlg.querySelector<HTMLButtonElement>('[data-search-close]')!.onclick = () => dlg.close();
+  dlg.onclick = (e) => { if (e.target === dlg) dlg.close(); };
+  q.oninput = render;
+  q.onkeydown = (e) => {
+    const links = $$<HTMLAnchorElement>('a', res);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      sel = (sel + (e.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length;
+      links.forEach((a, j) => a.classList.toggle('sel', j === sel));
+    }
+    if (e.key === 'Enter' && links[sel]) { e.preventDefault(); dlg.close(); links[sel].click(); }
+  };
+  res.onclick = () => dlg.close();
+  const key = (e: KeyboardEvent) => {
+    if (e.key === '/' && !dlg.open && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) { e.preventDefault(); open(); }
+  };
+  addEventListener('keydown', key);
+  cleanups.push(() => removeEventListener('keydown', key));
 }
 
 /* ───────────────── hover tilt */
@@ -284,25 +352,6 @@ function parallax() {
   $$('[data-marquee-text]').forEach((el) => {
     gsap.fromTo(el, { xPercent: 8 }, { xPercent: -12, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } });
   });
-}
-
-/* ───────────────── crosshair readout in hero */
-function crosshair() {
-  const sec = document.querySelector<HTMLElement>('[data-crosshair]');
-  if (!sec || !matchMedia('(hover: hover)').matches) return;
-  const x = document.createElement('div'), y = document.createElement('div'), r = document.createElement('div');
-  x.className = 'xh xh-x'; y.className = 'xh xh-y'; r.className = 'xh-r mono';
-  sec.append(x, y, r);
-  const move = (e: PointerEvent) => {
-    const b = sec.getBoundingClientRect();
-    const px = e.clientX - b.left, py = e.clientY - b.top;
-    x.style.transform = `translateY(${py}px)`;
-    y.style.transform = `translateX(${px}px)`;
-    r.style.transform = `translate(${px + 12}px, ${py + 12}px)`;
-    r.textContent = `X ${String(Math.round(px)).padStart(4, '0')}  Y ${String(Math.round(py)).padStart(4, '0')}`;
-  };
-  sec.addEventListener('pointermove', move);
-  cleanups.push(() => { sec.removeEventListener('pointermove', move); x.remove(); y.remove(); r.remove(); });
 }
 
 /* ───────────────── product finder */

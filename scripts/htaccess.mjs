@@ -4,7 +4,7 @@ import { products } from '../src/data/products.ts';
 
 const pages = {
   'index.html': '/', 'about.html': '/company/', 'team.html': '/company/', 'achievement.html': '/quality/',
-  'client.html': '/clients/', 'testimonial.html': '/clients/', 'contact.html': '/contact/',
+  'client.html': '/clients/', 'testimonial.html': '/testimonials/', 'contact.html': '/contact/',
   'csr_policy.html': '/csr-policy/', 'csr_projects.html': '/csr-policy/', 'returns.html': '/annual-returns/',
 };
 for (const p of products) for (const old of p.legacy) pages[old] = `/products/${p.slug}/`;

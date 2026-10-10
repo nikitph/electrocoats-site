@@ -102,10 +102,51 @@ export const capabilities = [
   'Electrical insulating powders',
 ];
 
-export const nav = [
-  { href: '/products/', label: 'Products' },
-  { href: '/quality/', label: 'Quality' },
-  { href: '/company/', label: 'Company' },
-  { href: '/clients/', label: 'Clients' },
-  { href: '/contact/', label: 'Contact' },
+/** Mirrors the original electrocoats.com menu so returning visitors find their way. */
+export type MenuItem = { label: string; href: string; children?: { label: string; href: string }[]; mega?: boolean };
+export const menu: MenuItem[] = [
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/company/', children: [
+    { label: 'Company Profile', href: '/company/' },
+    { label: 'Our Leadership', href: '/company/#leadership' },
+    { label: 'Achievement', href: '/quality/#awards' },
+    { label: 'Quality & Lab', href: '/quality/' },
+    { label: 'CSR Projects', href: '/csr-policy/#projects' },
+    { label: 'Annual Returns', href: '/annual-returns/' },
+  ] },
+  { label: 'Products', href: '/products/', mega: true },
+  { label: 'Clients', href: '/clients/' },
+  { label: 'Testimonial', href: '/testimonials/' },
+  { label: 'Contact', href: '/contact/' },
+];
+
+/** The five products from the original homepage slider, same order and photos. */
+export const heroSlides = [
+  { title: 'Wire Enamels', sub: 'for primary insulation', img: '/img/slider/5.jpg', href: '/contact/#enquiry',
+    d: 'Insulation for magnet wire and machine windings, backed by our polyesterimide and varnish chemistry.', chips: ['Primary insulation', 'Windings'] },
+  { title: 'Battery Application', sub: 'lead-acid & VRLA sealing', img: '/img/slider/4.jpg', href: '/products/?app=battery',
+    d: 'Lid-to-container and terminal sealing epoxies trusted by India’s largest battery makers.', chips: ['H₂SO₄ resistant', 'FR grades'] },
+  { title: 'Epoxy & Polyurethane Resins', sub: 'potting & encapsulation', img: '/img/slider/2.jpg', href: '/products/?process=potting',
+    d: 'Void-free potting and casting compounds for electronics, transformers and LED drivers.', chips: ['UL 94 V-0 · E255884', 'Class F 155 °C'] },
+  { title: 'Insulating Varnishes', sub: 'impregnation & finishing', img: '/img/slider/3.jpg', href: '/products/?process=impregnation',
+    d: 'Air-drying and baking varnishes from Class E to Class H for stators, armatures and coils.', chips: ['Class E – H', 'Dip · brush · spray'] },
+  { title: 'Powder Coating', sub: 'for armatures', img: '/img/slider/1.jpg', href: '/products/epicoat-e/',
+    d: 'Epicoat-E epoxy powder for slot-cell insulation of micro-motor stators and rotors.', chips: ['Fluidised bed', 'No post cure'] },
+];
+
+/** "Our Products" tiles from the original homepage. */
+export const homeProducts = [
+  { t: 'Potting & Encapsulation', img: '/img/products/1.jpg', href: '/products/?process=potting' },
+  { t: 'Epoxy Resin 520', img: '/img/products/2.jpg', href: '/products/resin-520/' },
+  { t: 'Gelcoat', img: '/img/products/3.jpg', href: '/products/gelcoat/' },
+  { t: 'Granite & Marble Coating', img: '/img/products/4.jpg', href: '/products/granite-marble-coating/' },
+];
+
+/** Statistics block from the original homepage. Units added; confirm with the client. */
+export const stats = [
+  { v: 5, pre: '', suf: '', u: 'countries', l: 'Countries covered' },
+  { v: 95, pre: '', suf: '%+', u: 'CSI', l: 'Customer satisfaction index' },
+  { v: 99, pre: '', suf: '%+', u: 'DPI', l: 'Delivery performance index' },
+  { v: 0.2, pre: '<', suf: '%', u: 'rejection', l: 'Customer rejection' },
+  { v: 800, pre: '', suf: '+', u: 'clients', l: 'Happy clients' },
 ];

@@ -1,8 +1,14 @@
 ---
-import { nav, company } from '../data/site';
+/** Primary navigation. Labels, order and dropdowns match the original site's menu. */
+import { menu, company } from '../data/site';
 import { APPLICATIONS, products } from '../data/products';
 const path = Astro.url.pathname;
+const isOn = (href: string) => (href === '/' ? path === '/' : path.startsWith(href.split('#')[0]));
 const count = (k: string) => products.filter((p) => p.apps.includes(k as any)).length;
+const index = [
+  ...products.map((p) => ({ t: p.name, s: p.summary, h: `/products/${p.slug}/`, k: 'Product' })),
+  ...menu.flatMap((m) => (m.children ?? [m]).map((c) => ({ t: c.label, s: '', h: c.href, k: 'Page' }))),
+];
 ---
 <header class="nav" data-nav>
   <div class="nav__in wrap">
@@ -10,73 +16,140 @@ const count = (k: string) => products.filter((p) => p.apps.includes(k as any)).l
       <span class="logo-plate"><img src="/img/logo.svg" alt={company.name} width="359" height="101" /></span>
     </a>
     <nav class="links" aria-label="Primary">
-      {nav.map((n) => (
-        <div class={`li ${n.label === 'Products' ? 'has-mega' : ''}`}>
-          <a href={n.href} class:list={[{ on: path.startsWith(n.href) }]}>{n.label}</a>
-          {n.label === 'Products' && (
-            <div class="mega">
-              <div class="mega__in">
-                <p class="eyebrow">By application</p>
-                <ul>
-                  {Object.entries(APPLICATIONS).map(([k, v]) => (
-                    <li><a href={`/products/?app=${k}`}><span>{v.label}</span><span class="mono">{String(count(k)).padStart(2, '0')}</span></a></li>
-                  ))}
-                </ul>
-                <a class="btn solid" href="/products/">Open product finder <span class="arr">→</span></a>
-              </div>
-            </div>
+      {menu.map((m, mi) => (
+        <div class:list={['li', { drop: m.children || m.mega }]}>
+          <a href={m.href} class:list={[{ on: isOn(m.href) }]}>
+            <sup>0{mi + 1}</sup>{m.label}{(m.children || m.mega) && <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" /></svg>}
+          </a>
+          {m.children && (
+            <div class="menu"><ul class="menu__in">{m.children.map((c, ci) => <li><a href={c.href}><span class="mono">{String(ci + 1).padStart(2, '0')}</span>{c.label}<i aria-hidden="true">→</i></a></li>)}</ul></div>
+          )}
+          {m.mega && (
+            <div class="menu"><div class="menu__in mega">
+              <p class="eyebrow">By application</p>
+              <ul>
+                {Object.entries(APPLICATIONS).map(([k, v]) => (
+                  <li><a href={`/products/?app=${k}`}><span>{v.label}</span><span class="mono">{String(count(k)).padStart(2, '0')}</span></a></li>
+                ))}
+              </ul>
+              <a class="btn solid" href="/products/">All products <span class="arr">→</span></a>
+            </div></div>
           )}
         </div>
       ))}
     </nav>
-    <button class="theme" type="button" data-theme-toggle aria-label="Switch colour theme"><span class="mono">◐</span></button>
-    <a class="btn nav__cta" href="/contact/#enquiry">Enquire <span class="arr">→</span></a>
+    <button class="search-btn" type="button" aria-label="Search products" data-search-open>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5L20 20" /></svg>
+      <kbd class="mono">/</kbd>
+    </button>
     <button class="burger" aria-label="Menu" aria-expanded="false" data-burger><span></span><span></span></button>
   </div>
   <div class="nav__progress" data-progress></div>
   <div class="drawer" data-drawer>
-    {nav.map((n, i) => <a href={n.href}><span class="mono">0{i + 1}</span>{n.label}</a>)}
-    <a href={`tel:${company.phones[0].tel}`} class="mono">{company.phones[0].label}</a>
+    {menu.map((m) => (
+      <div class="drawer__grp">
+        <a href={m.href}>{m.label}</a>
+        {m.children && <div class="drawer__sub">{m.children.map((c) => <a href={c.href}>{c.label}</a>)}</div>}
+      </div>
+    ))}
+    <a href={`tel:${company.phones[0].tel}`} class="mono drawer__tel">{company.phones[0].label}</a>
   </div>
 </header>
 
+<dialog class="search" data-search>
+  <div class="search__in">
+    <div class="search__bar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5L20 20" /></svg>
+      <input type="search" placeholder="Search products, applications, pages…" aria-label="Search" data-search-q autocomplete="off" />
+      <button type="button" class="mono search__x" data-search-close>ESC</button>
+    </div>
+    <ul class="search__res" data-search-res></ul>
+  </div>
+  <script type="application/json" data-search-index set:html={JSON.stringify(index)} />
+</dialog>
+
 <style>
-  .nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .4s, backdrop-filter .4s, transform .5s var(--ease); }
-  .nav.scrolled { background: var(--nav-bg); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line-3); }
+  .nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .4s, backdrop-filter .4s, transform .5s var(--ease), border-color .4s; border-bottom: 1px solid transparent; }
+  .nav.scrolled { background: var(--nav-bg); backdrop-filter: blur(16px) saturate(1.2); border-bottom-color: var(--line-2); }
   .nav.hide { transform: translateY(-100%); }
-  .nav__in { display: flex; align-items: center; gap: 24px; height: 80px; }
-  .brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
+  .nav__in { display: flex; align-items: center; gap: 18px; height: 84px; }
+  .brand { margin-right: auto; }
   .logo-plate { display: block; background: var(--plate); padding: 4px 8px; border-radius: 2px; }
-  .logo-plate img { height: 54px; width: auto; }
-  @media (max-width: 520px) { .logo-plate img { height: 44px; } }
-  .theme { width: 40px; height: 40px; background: none; border: 1px solid var(--line-2); color: var(--ink); cursor: pointer; transition: border-color .3s, transform .5s var(--ease); }
-  .theme:hover { border-color: var(--amber); transform: rotate(180deg); }
-  .links { display: none; gap: 4px; }
+  .logo-plate img { height: 52px; width: auto; }
+  @media (max-width: 520px) { .logo-plate img { height: 42px; } .nav__in { height: 72px; } }
+
+  .links { display: none; align-items: center; gap: 2px; padding: 4px; border: 1px solid var(--line-2); background: var(--panel); backdrop-filter: blur(10px); }
   .li { position: relative; }
-  .li > a { display: block; padding: 10px 14px; font-family: var(--mono); font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); position: relative; }
-  .li > a::after { content: ''; position: absolute; left: 14px; right: 14px; bottom: 4px; height: 1px; background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform .4s var(--ease); }
-  .li > a:hover, .li > a.on { color: var(--ink); }
-  .li > a:hover::after, .li > a.on::after { transform: scaleX(1); }
-  .mega { position: absolute; top: 100%; left: -20px; padding-top: 14px; opacity: 0; visibility: hidden; transform: translateY(8px); transition: all .35s var(--ease); }
-  .has-mega:hover .mega, .has-mega:focus-within .mega { opacity: 1; visibility: visible; transform: none; }
-  .mega__in { width: 360px; background: var(--bg-2); border: 1px solid var(--line-2); padding: 22px; display: grid; gap: 14px; }
+  .li > a {
+    position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 11px 14px;
+    font-family: var(--mono); font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2);
+    transition: color .25s, background .25s;
+  }
+  .li > a sup { font-size: .55rem; color: var(--ink-3); letter-spacing: 0; transform: translateY(-3px); transition: color .25s; }
+  .li > a::before, .li > a::after { content: ''; position: absolute; width: 7px; height: 7px; border: 0 solid var(--accent); opacity: 0; transition: opacity .25s, transform .35s var(--ease); }
+  .li > a::before { top: 3px; left: 3px; border-width: 1px 0 0 1px; transform: translate(4px, 4px); }
+  .li > a::after { bottom: 3px; right: 3px; border-width: 0 1px 1px 0; transform: translate(-4px, -4px); }
+  .li > a:hover, .drop:focus-within > a, .drop:hover > a { color: var(--heading); background: var(--bg-2); }
+  .li > a:hover::before, .li > a:hover::after, .drop:hover > a::before, .drop:hover > a::after { opacity: 1; transform: none; }
+  .li > a.on { color: var(--heading); }
+  .li > a.on sup { color: var(--accent); }
+  .li > a.on::after { opacity: 1; transform: none; width: 4px; height: 4px; border: 0; border-radius: 50%; background: var(--accent); bottom: 4px; right: 50%; }
+  .chev { width: 8px; height: 5px; fill: none; stroke: currentColor; stroke-width: 1.4; transition: transform .3s var(--ease); }
+  .drop:hover .chev, .drop:focus-within .chev { transform: rotate(180deg); }
+
+  .menu { position: absolute; top: 100%; left: -5px; padding-top: 12px; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .3s var(--ease), transform .3s var(--ease), visibility .3s; }
+  .drop:hover .menu, .drop:focus-within .menu { opacity: 1; visibility: visible; transform: none; }
+  .menu__in { list-style: none; margin: 0; padding: 8px; min-width: 270px; background: var(--bg); border: 1px solid var(--line-2); box-shadow: 0 30px 50px -30px rgba(20, 22, 50, .45); position: relative; }
+  .menu__in::before { content: ''; position: absolute; left: -1px; right: -1px; top: -1px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--green) 60%, transparent); }
+  .menu__in > li { opacity: 0; transform: translateX(-6px); transition: opacity .3s, transform .4s var(--ease); }
+  .drop:hover .menu__in > li, .drop:focus-within .menu__in > li { opacity: 1; transform: none; }
+  .menu__in > li:nth-child(2) { transition-delay: .03s; } .menu__in > li:nth-child(3) { transition-delay: .06s; } .menu__in > li:nth-child(4) { transition-delay: .09s; } .menu__in > li:nth-child(5) { transition-delay: .12s; } .menu__in > li:nth-child(6) { transition-delay: .15s; }
+  .menu__in > li > a { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; padding: 11px 12px; font-weight: 600; font-stretch: 106%; color: var(--ink); transition: background .2s, color .2s; }
+  .menu__in > li > a .mono { color: var(--ink-3); font-size: .64rem; }
+  .menu__in > li > a i { font-style: normal; color: var(--accent); opacity: 0; transform: translateX(-6px); transition: all .3s var(--ease); }
+  .menu__in > li > a:hover { background: var(--bg-2); color: var(--heading); }
+  .menu__in > li > a:hover i { opacity: 1; transform: none; }
+  .mega { width: 360px; padding: 18px; display: grid; gap: 12px; }
   .mega ul { list-style: none; margin: 0; padding: 0; }
-  .mega li a { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line-3); transition: color .2s, padding .3s var(--ease); }
-  .mega li a:hover { color: var(--amber); padding-left: 6px; }
-  .nav__cta { display: none; padding: .7em 1.1em; }
-  .nav__progress { position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%; background: var(--amber); transform: scaleX(0); transform-origin: left; }
-  .burger { width: 40px; height: 40px; background: none; border: 1px solid var(--line-2); display: grid; place-content: center; gap: 6px; cursor: pointer; }
-  .burger span { width: 18px; height: 1px; background: var(--ink); transition: transform .4s var(--ease); }
-  .nav.open .burger span:first-child { transform: translateY(3.5px) rotate(45deg); }
-  .nav.open .burger span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
-  .drawer { position: fixed; inset: 80px 0 0; background: var(--bg); display: flex; flex-direction: column; padding: 24px var(--gutter); gap: 4px; clip-path: inset(0 0 100% 0); transition: clip-path .6s var(--ease); }
+  .mega li a { display: flex; justify-content: space-between; padding: 10px 2px; border-bottom: 1px solid var(--line-3); font-weight: 600; font-stretch: 106%; color: var(--ink); transition: color .2s, padding .3s var(--ease); }
+  .mega li a .mono { color: var(--ink-3); }
+  .mega li a:hover { color: var(--accent); padding-left: 8px; }
+
+  .search-btn {
+    height: 46px; padding: 0 12px; display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--line-2); background: var(--panel);
+    backdrop-filter: blur(10px); cursor: pointer; color: var(--ink); transition: border-color .25s, color .25s;
+  }
+  .search-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .search-btn kbd { font-size: .66rem; border: 1px solid var(--line-2); padding: 1px 6px; color: var(--ink-3); }
+  .search-btn svg, .search__bar svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+  .nav__progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); transform: scaleX(0); transform-origin: left; }
+  .burger { width: 46px; height: 46px; background: var(--panel); border: 1px solid var(--line-2); display: grid; place-content: center; gap: 6px; cursor: pointer; }
+  .burger span { width: 18px; height: 1.5px; background: var(--ink); transition: transform .4s var(--ease); }
+  .nav.open .burger span:first-child { transform: translateY(3.75px) rotate(45deg); }
+  .nav.open .burger span:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+  .drawer { position: fixed; inset: 72px 0 0; background: var(--bg); display: flex; flex-direction: column; padding: 16px var(--gutter) 40px; overflow: auto; clip-path: inset(0 0 100% 0); transition: clip-path .6s var(--ease); }
   .nav.open .drawer { clip-path: inset(0); }
-  .drawer a { display: flex; align-items: baseline; gap: 16px; font-size: 2.2rem; font-weight: 800; font-stretch: 118%; padding: 10px 0; border-bottom: 1px solid var(--line-3); }
-  .drawer a.mono { font-size: 1rem; font-weight: 400; color: var(--amber); border: 0; margin-top: 16px; }
-  .drawer .mono { color: var(--ink-3); }
-  @media (min-width: 1000px) {
+  .drawer__grp { border-bottom: 1px solid var(--line-3); padding: 12px 0; }
+  .drawer__grp > a { font-size: 1.8rem; font-weight: 800; font-stretch: 118%; color: var(--heading); }
+  .drawer__sub { display: grid; gap: 6px; padding: 8px 0 4px 2px; }
+  .drawer__sub a { font-family: var(--mono); font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  .drawer__tel { color: var(--accent); margin-top: 20px; }
+  @media (max-width: 1099px) { .search-btn kbd { display: none; } }
+  @media (min-width: 1100px) {
     .links { display: flex; }
-    .nav__cta { display: inline-flex; }
     .burger, .drawer { display: none; }
   }
+
+  /* search overlay */
+  .search { width: min(720px, calc(100vw - 32px)); max-height: 80vh; margin: 12vh auto auto; padding: 0; border: 1px solid var(--line-2); background: var(--bg); color: var(--ink); }
+  .search::backdrop { background: rgba(10, 12, 24, .45); backdrop-filter: blur(6px); }
+  .search__bar { display: flex; align-items: center; gap: 14px; padding: 18px 20px; border-bottom: 1px solid var(--line-2); color: var(--ink-3); }
+  .search__bar input { flex: 1; border: 0; background: none; font-size: 1.2rem; outline: none; color: var(--ink); min-width: 0; }
+  .search__x { background: none; border: 1px solid var(--line-2); padding: 4px 8px; cursor: pointer; color: var(--ink-3); }
+  .search__res { list-style: none; margin: 0; padding: 8px 0; max-height: 60vh; overflow: auto; }
+  .search__res :global(a) { display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; padding: 12px 20px; transition: background .2s; }
+  .search__res :global(a:hover), .search__res :global(a.sel) { background: var(--bg-2); }
+  .search__res :global(b) { font-weight: 700; }
+  .search__res :global(small) { grid-column: 1; color: var(--ink-3); font-size: .85rem; }
+  .search__res :global(.k) { grid-row: 1 / span 2; grid-column: 2; align-self: center; color: var(--accent); font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; }
 </style>

@@ -113,9 +113,9 @@ const jsonld = {
   .pd__in { display: grid; gap: 40px; align-items: center; grid-template-columns: 1fr; }
   @media (min-width: 900px) { .pd__in { grid-template-columns: 1.3fr .7fr; } }
   .pd__chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 22px; }
-  .pd__chips a.chip:hover { border-color: var(--amber); color: var(--amber); }
+  .pd__chips a.chip:hover { border-color: var(--accent); color: var(--accent); }
   .pd__cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
-  .pd__fig { position: relative; max-width: 340px; width: 100%; justify-self: center; aspect-ratio: 1; display: grid; place-items: center; border: 1px solid var(--line-2); background: radial-gradient(circle at 50% 60%, rgba(244,166,42,.08), transparent 60%); }
+  .pd__fig { position: relative; max-width: 340px; width: 100%; justify-self: center; aspect-ratio: 1; display: grid; place-items: center; border: 1px solid var(--line-2); background: radial-gradient(circle at 50% 60%, rgba(214, 46, 59,.08), transparent 60%); }
   .pd__fig::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(30deg, var(--line-3) 0 1px, transparent 1px 22px), repeating-linear-gradient(150deg, var(--line-3) 0 1px, transparent 1px 22px); }
   .pd__fig :global(.pd__pack) { width: 66%; position: relative; }
   .pd__fig:hover :global(.lid) { transform: translateY(-18px); }
@@ -127,10 +127,10 @@ const jsonld = {
   .pd__intro p { font-size: 1.15rem; color: var(--ink-2); margin: 0 0 1em; max-width: 64ch; }
   .pd__intro p:first-child { font-size: clamp(1.25rem, 2vw, 1.6rem); color: var(--ink); line-height: 1.4; }
   .block { margin-top: 48px; }
-  .blk-h { color: var(--amber); font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 400; margin-bottom: 14px; }
+  .blk-h { color: var(--accent); font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 400; margin-bottom: 14px; }
   .ticks-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line-2); }
   .ticks-list li { padding: 14px 0 14px 28px; border-bottom: 1px solid var(--line-2); position: relative; }
-  .ticks-list li::before { content: ''; position: absolute; left: 4px; top: 50%; width: 10px; height: 6px; border-left: 1px solid var(--amber); border-bottom: 1px solid var(--amber); transform: translateY(-70%) rotate(-45deg); }
+  .ticks-list li::before { content: ''; position: absolute; left: 4px; top: 50%; width: 10px; height: 6px; border-left: 1px solid var(--accent); border-bottom: 1px solid var(--accent); transform: translateY(-70%) rotate(-45deg); }
   .sheet { border: 1px solid var(--line-2); padding: 24px; background: var(--panel); display: grid; gap: 18px; }
   .sheet__h { display: flex; justify-content: space-between; color: var(--ink-3); font-size: .66rem; letter-spacing: .14em; border-bottom: 1px solid var(--line); padding-bottom: 12px; gap: 12px; }
   .sheet__note { color: var(--ink-3); margin: 0; font-size: .72rem; }

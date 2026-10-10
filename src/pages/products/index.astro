@@ -42,13 +42,13 @@ const sorted = [...products].sort((a, b) => Number(!!a.stub) - Number(!!b.stub))
         <button type="button" class="btn ghost" data-reset>Reset filters ↺</button>
       </aside>
       <div>
-        <div class="bar mono"><span><b class="amber" data-count-out>{String(products.length).padStart(2, '0')}</b> / {products.length} products</span><span class="hint">Filters combine. “Must have” requires all selected.</span></div>
+        <div class="bar mono"><span><b class="accent" data-count-out>{String(products.length).padStart(2, '0')}</b> / {products.length} products</span><span class="hint">Filters combine. “Must have” requires all selected.</span></div>
         <div class="grid" data-grid>
           {sorted.map((p, i) => <ProductCard p={p} idx={i} />)}
         </div>
         <div class="empty" data-empty hidden>
           <p class="h-m">Nothing matches that combination.</p>
-          <p class="lede">We formulate to order. <a class="amber" href="/contact/#enquiry">Describe your application</a> and the lab will propose a grade.</p>
+          <p class="lede">We formulate to order. <a class="accent" href="/contact/#enquiry">Describe your application</a> and the lab will propose a grade.</p>
         </div>
       </div>
     </div>
@@ -60,7 +60,7 @@ const sorted = [...products].sort((a, b) => Number(!!a.stub) - Number(!!b.stub))
   @media (min-width: 1000px) { .finder__in { grid-template-columns: 280px 1fr; } .filters { position: sticky; top: 96px; align-self: start; max-height: calc(100vh - 110px); overflow: auto; } }
   .filters { display: grid; gap: 26px; align-content: start; padding-right: 8px; }
   .ftoggle { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line-2); cursor: pointer; text-transform: uppercase; letter-spacing: .12em; color: var(--ink); }
-  .ftoggle [data-fcount] { color: var(--amber); margin-right: auto; margin-left: 10px; }
+  .ftoggle [data-fcount] { color: var(--accent); margin-right: auto; margin-left: 10px; }
   .ftoggle__i { transition: transform .4s var(--ease); font-size: 1rem; }
   @media (max-width: 999px) {
     .filters:not(.open) > :not(.ftoggle) { display: none; }
@@ -72,7 +72,7 @@ const sorted = [...products].sort((a, b) => Number(!!a.stub) - Number(!!b.stub))
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .chips .chip { cursor: pointer; background: transparent; transition: all .25s; }
   .chips .chip:hover { border-color: var(--ink-2); color: var(--ink); }
-  .chips .chip.on { background: var(--amber); color: var(--on-accent); border-color: var(--amber); }
+  .chips .chip.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .bar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--ink-3); padding-bottom: 16px; margin-bottom: 20px; border-bottom: 1px solid var(--line-2); }
   .bar b { font-size: 1.1rem; }
   .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); position: relative; }

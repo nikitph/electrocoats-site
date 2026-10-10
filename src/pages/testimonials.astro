@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import Enquiry from '../components/Enquiry.astro';
+import { testimonials } from '../data/site';
+---
+<Base title="Client testimonials" description="What Neotroniks, Stanley Black & Decker, Kinetic Taigene and other manufacturers say about Electrocoats resins, R&D support and delivery.">
+  <section class="phead">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Home</a><span>/</span><span>Testimonial</span></div>
+      <p class="eyebrow">Client’s feedback</p>
+      <h1 class="h-xl" data-split>In their <span class="outline">words.</span></h1>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap tl" data-stagger>
+      {testimonials.map((t, i) => (
+        <figure class:list={['t', { big: i < 2 }]}>
+          <span class="t__q" aria-hidden="true">“</span>
+          <blockquote>{t.q}</blockquote>
+          <figcaption><b>{t.n}</b><span class="mono">{t.c}</span></figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+  <Enquiry />
+</Base>
+<style>
+  .tl { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .tl { grid-template-columns: repeat(6, 1fr); } .t { grid-column: span 2; } .t.big { grid-column: span 3; } }
+  .t { margin: 0; padding: clamp(24px, 3vw, 40px); border: 1px solid var(--line-2); background: var(--panel); display: grid; gap: 20px; align-content: space-between; transition: border-color .3s; }
+  .t:hover { border-color: var(--accent); }
+  .t__q { font-family: Georgia, serif; font-size: 5rem; line-height: .6; color: var(--red); height: 34px; }
+  .t blockquote { margin: 0; font-size: 1.1rem; color: var(--ink); }
+  .t.big blockquote { font-size: clamp(1.2rem, 1.8vw, 1.5rem); font-weight: 600; line-height: 1.35; }
+  .t figcaption { display: grid; gap: 2px; }
+  .t figcaption .mono { color: var(--ink-3); }
+</style>

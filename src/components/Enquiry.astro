@@ -58,11 +58,11 @@ const list = [...products].sort((a, b) => a.name.localeCompare(b.name));
   .enq { padding: clamp(80px, 10vw, 140px) 0; border-top: 1px solid var(--line-2); }
   .enq__direct { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 10px; }
   .enq__direct a { color: var(--ink-2); transition: color .2s; }
-  .enq__direct a:hover { color: var(--amber); }
+  .enq__direct a:hover { color: var(--accent); }
   .enq__form { display: grid; gap: 26px; padding: clamp(22px, 3vw, 40px); border: 1px solid var(--line-2); background: var(--panel); }
   .row { display: grid; gap: 26px; grid-template-columns: 1fr; }
   @media (min-width: 560px) { .row { grid-template-columns: 1fr 1fr; } }
   .hp { position: absolute; left: -9999px; }
   .enq__foot { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-  .enq__status { color: var(--amber); margin: 0; }
+  .enq__status { color: var(--accent); margin: 0; }
 </style>

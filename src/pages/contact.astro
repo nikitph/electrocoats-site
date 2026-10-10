@@ -14,17 +14,17 @@ import { company } from '../data/site';
   <section class="section ct">
     <div class="wrap ct__grid" data-stagger>
       <div class="ct__card ticks">
-        <span class="mono amber">{company.works.title}</span>
+        <span class="mono accent">{company.works.title}</span>
         <address>{company.works.lines.map((l) => <span>{l}</span>)}</address>
         <a class="btn" href={company.works.map} target="_blank" rel="noopener">Open in Maps ↗</a>
       </div>
       <div class="ct__card ticks">
-        <span class="mono amber">{company.correspondence.title}</span>
+        <span class="mono accent">{company.correspondence.title}</span>
         <address>{company.correspondence.lines.map((l) => <span>{l}</span>)}</address>
         <a class="mono" href={`mailto:${company.correspondence.email}`}>{company.correspondence.email}</a>
       </div>
       <div class="ct__card ticks">
-        <span class="mono amber">Direct</span>
+        <span class="mono accent">Direct</span>
         <ul>
           {company.phones.map((p) => <li><a href={`tel:${p.tel}`}>{p.label}</a></li>)}
           <li><a href={`mailto:${company.email}`}>{company.email}</a></li>
@@ -42,6 +42,6 @@ import { company } from '../data/site';
   .ct__card { border: 1px solid var(--line-2); padding: 28px; display: grid; gap: 18px; align-content: start; }
   .ct__card address { font-style: normal; display: grid; font-size: 1.1rem; }
   .ct__card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 1.15rem; font-weight: 600; }
-  .ct__card a:not(.btn):hover { color: var(--amber); }
+  .ct__card a:not(.btn):hover { color: var(--accent); }
   .ct__card .btn { justify-self: start; }
 </style>

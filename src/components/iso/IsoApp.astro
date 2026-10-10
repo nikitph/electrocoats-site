@@ -1,5 +1,5 @@
 ---
-/** Small isometric vignette per application. The amber element is always where our product goes. */
+/** Small isometric vignette per application. The accent (logo red) element is always where our product goes. */
 import { P, box, cyl, toroid, line, poly, ring, band, viewBox, type V3 } from '../../lib/iso';
 import type { App } from '../../data/products';
 
@@ -8,23 +8,23 @@ const { kind, class: cls = '' } = Astro.props;
 
 let s = '';
 let vb = '';
-const amberBox = (x: number, y: number, z: number, w: number, d: number, h: number) =>
+const accentBox = (x: number, y: number, z: number, w: number, d: number, h: number) =>
   box(x, y, z, w, d, h, { top: 'am-f', left: 'am-f', right: 'am-f', ln: 'am' });
 
 switch (kind) {
   case 'electrical': {
-    // potted transformer: housing filled with amber, coil peeking out
+    // potted transformer: housing filled with resin, coil peeking out
     s += box(0, 0, 0, 120, 90, 10);
-    s += amberBox(8, 8, 10, 104, 74, 34);
+    s += accentBox(8, 8, 10, 104, 74, 34);
     s += toroid(60, 45, 30, 28, 12, 22, 26);
     for (const [x, y] of [[20, 90], [40, 90], [80, 90], [100, 90]]) s += line([x, y, 4], [x, y + 26, 4]);
     vb = viewBox([0, 0, 0], [120, 120, 60], 14);
     break;
   }
   case 'battery': {
-    // VRLA block, amber lid seam + terminal seals
+    // VRLA block, accent lid seam + terminal seals
     s += box(0, 0, 0, 130, 70, 70);
-    s += amberBox(-1, -1, 70, 132, 72, 3);
+    s += accentBox(-1, -1, 70, 132, 72, 3);
     s += box(0, 0, 73, 130, 70, 10);
     for (const [x, y] of [[26, 35], [104, 35]]) {
       s += cyl(x, y, 83, 10, 4, { top: 'am-f', right: 'am-f', ln: 'am' });
@@ -35,9 +35,9 @@ switch (kind) {
     break;
   }
   case 'civil': {
-    // slab + parapet with amber waterproofing membrane and a tank
+    // slab + parapet with accent waterproofing membrane and a tank
     s += box(0, 0, 0, 150, 110, 16);
-    s += amberBox(0, 0, 16, 150, 110, 2);
+    s += accentBox(0, 0, 16, 150, 110, 2);
     s += box(0, 0, 18, 150, 6, 16) + box(0, 6, 18, 6, 104, 16);
     s += cyl(96, 58, 18, 26, 44) + band(96, 58, 32, 26, 'ln2') + band(96, 58, 48, 26, 'ln2');
     s += `<ellipse class="am-f" cx="${P(96, 58, 62)[0]}" cy="${P(96, 58, 62)[1]}" rx="${26 * 1.2247}" ry="${26 * .7071}"/>`;
@@ -46,10 +46,10 @@ switch (kind) {
     break;
   }
   case 'tooling': {
-    // tooling board with stepped pocket + amber gelcoat surface
+    // tooling board with stepped pocket + accent gelcoat surface
     s += box(0, 0, 0, 140, 90, 22);
     s += box(0, 0, 22, 70, 90, 18);
-    s += amberBox(70, 0, 22, 70, 50, 1.5);
+    s += accentBox(70, 0, 22, 70, 50, 1.5);
     s += box(70, 50, 22, 70, 40, 8);
     // milling cutter
     s += cyl(100, 24, 46, 5, 36) + cyl(100, 24, 82, 12, 22);
@@ -58,9 +58,9 @@ switch (kind) {
     break;
   }
   case 'general': {
-    // two plates bonded with amber line + twin cartridge
+    // two plates bonded with accent line + twin cartridge
     s += box(0, 0, 0, 120, 70, 8);
-    s += amberBox(20, 6, 8, 80, 58, 2.5);
+    s += accentBox(20, 6, 8, 80, 58, 2.5);
     s += box(30, 10, 10.5, 90, 54, 8);
     s += cyl(150, 20, 0, 9, 64) + cyl(150, 42, 0, 9, 64);
     s += cyl(150, 31, 64, 4, 14, { top: 'am-f', right: 'am-f', ln: 'am' });

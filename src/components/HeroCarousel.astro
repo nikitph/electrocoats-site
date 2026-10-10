@@ -1,0 +1,139 @@
+---
+/**
+ * Homepage hero: the five products from the original slider, re-presented as an
+ * autoplaying, clickable carousel. Behaviour lives in motion.ts → carousels().
+ */
+import { heroSlides } from '../data/site';
+const n = heroSlides.length;
+---
+<section class="hc" data-carousel data-interval="6500" aria-roledescription="carousel" aria-label="Featured products">
+  <div class="wrap hc__in">
+    <div class="hc__copy">
+      <div class="hc__meta mono">
+        <span class="hc__live"><i></i> Thermoset resins · Pune</span>
+        <span class="hc__count"><b data-cur>01</b> / {String(n).padStart(2, '0')}</span>
+      </div>
+      <div class="hc__titles">
+        {heroSlides.map((s, i) => (
+          <div class:list={['hc__t', { on: i === 0 }]} data-slide-text={i} aria-hidden={i !== 0 ? 'true' : undefined}>
+            <p class="eyebrow">{s.sub}</p>
+            {i === 0 ? <h1 class="hc__h">{s.title}</h1> : <h2 class="hc__h">{s.title}</h2>}
+            <p class="hc__d">{s.d}</p>
+            <div class="hc__cta">
+              <a href={s.href} class="btn solid" tabindex={i === 0 ? undefined : -1}>Explore <span class="arr">→</span></a>
+              <a href="/contact/#enquiry" class="btn" tabindex={i === 0 ? undefined : -1}>Request a sample</a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="hc__stage" data-stage>
+      {heroSlides.map((s, i) => (
+        <figure class:list={['hc__img', { on: i === 0 }]} data-slide={i} role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${n}: ${s.title}`}>
+          <img src={s.img} alt={`${s.title} ${s.sub}`} width="1602" height="708" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} />
+          <figcaption class="hc__chips">
+            {s.chips.map((c) => <span class="chip">{c}</span>)}
+          </figcaption>
+        </figure>
+      ))}
+      <svg class="hc__hud" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <pattern id="hc-iso" width="6" height="3.464" patternUnits="userSpaceOnUse">
+            <path d="M0 3.464L6 0M0 0l6 3.464" />
+          </pattern>
+        </defs>
+        <rect class="hc__grid" width="100" height="60" fill="url(#hc-iso)" />
+      </svg>
+      <span class="hc__scan" data-scan></span>
+      <span class="hc__tick tl"></span><span class="hc__tick tr"></span><span class="hc__tick bl"></span><span class="hc__tick br"></span>
+      <div class="hc__nav">
+        <button type="button" class="hc__arrow" data-prev aria-label="Previous product">←</button>
+        <button type="button" class="hc__arrow" data-toggle aria-label="Pause autoplay"><span data-toggle-ico>❚❚</span></button>
+        <button type="button" class="hc__arrow" data-next aria-label="Next product">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="hc__tabs" role="tablist" aria-label="Choose a product">
+      {heroSlides.map((s, i) => (
+        <button type="button" role="tab" class:list={['hc__tab', { on: i === 0 }]} data-tab={i} aria-selected={i === 0 ? 'true' : 'false'}>
+          <span class="mono">0{i + 1}</span>
+          <span class="hc__tab-t">{s.title}</span>
+          <span class="hc__bar"><i></i></span>
+        </button>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hc { padding: 112px 0 18px; min-height: calc(100svh - 150px); display: flex; flex-direction: column; justify-content: center; position: relative; }
+  .hc__in { display: grid; gap: 28px; align-items: center; grid-template-columns: 1fr; }
+  @media (min-width: 1000px) { .hc__in { grid-template-columns: .9fr 1.3fr; gap: 48px; } }
+
+  .hc__meta { display: flex; justify-content: space-between; color: var(--ink-3); margin-bottom: 22px; gap: 12px; }
+  .hc__live { display: inline-flex; align-items: center; gap: 8px; }
+  .hc__live i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(90, 188, 99, .6); animation: hc-pulse 1.8s infinite; }
+  @keyframes hc-pulse { 70% { box-shadow: 0 0 0 9px rgba(90, 188, 99, 0); } 100% { box-shadow: 0 0 0 0 rgba(90, 188, 99, 0); } }
+  .hc__count b { color: var(--accent); font-weight: 500; }
+
+  .hc__titles { display: grid; }
+  .hc__t { grid-area: 1 / 1; visibility: hidden; }
+  .hc__t.on { visibility: visible; }
+  .hc__h { font-size: clamp(1.9rem, min(8.4vw, 5.2vw + 1rem), 4.8rem); margin: 14px 0 18px; line-height: .98; overflow-wrap: anywhere; }
+  .hc__in > *, .hc__titles, .hc__t { min-width: 0; }
+  .hc__d { color: var(--ink-2); font-size: clamp(1rem, 1.3vw, 1.15rem); max-width: 46ch; margin: 0; }
+  .hc__cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+
+  .hc__stage { position: relative; width: 100%; aspect-ratio: 1602 / 708; min-height: 220px; overflow: hidden; background: var(--bg-2);
+    clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 28px 100%, 0 calc(100% - 28px)); }
+  @media (min-width: 1000px) { .hc__stage { aspect-ratio: 16 / 10; } }
+  .hc__img { position: absolute; inset: 0; margin: 0; visibility: hidden; }
+  .hc__img.on { visibility: visible; }
+  .hc__img img { width: 100%; height: 100%; object-fit: cover; }
+  .hc__chips { position: absolute; left: 18px; bottom: 18px; display: flex; gap: 6px; flex-wrap: wrap; z-index: 3; }
+  .hc__chips .chip { background: rgba(255, 255, 255, .9); color: var(--navy); border-color: rgba(44, 49, 87, .25); backdrop-filter: blur(4px); }
+  .hc__hud { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+  .hc__grid { opacity: .18; }
+  .hc__hud pattern path { stroke: #fff; stroke-width: .08; fill: none; }
+  .hc__scan { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: var(--accent-2); box-shadow: 0 0 18px 2px rgba(237, 53, 65, .6); opacity: 0; z-index: 4; pointer-events: none; }
+  .hc__tick { position: absolute; width: 18px; height: 18px; border: 0 solid #fff; z-index: 3; pointer-events: none; }
+  .hc__tick.tl { top: 14px; left: 14px; border-width: 1.5px 0 0 1.5px; }
+  .hc__tick.tr { top: 14px; right: 40px; border-width: 1.5px 1.5px 0 0; }
+  .hc__tick.bl { bottom: 14px; left: 40px; border-width: 0 0 1.5px 1.5px; opacity: 0; }
+  .hc__tick.br { bottom: 14px; right: 14px; border-width: 0 1.5px 1.5px 0; }
+  .hc__nav { position: absolute; right: 16px; bottom: 16px; display: flex; gap: 6px; z-index: 5; }
+  .hc__arrow { width: 40px; height: 40px; border: 1px solid rgba(255, 255, 255, .5); background: rgba(27, 30, 51, .55); color: #fff; cursor: pointer; backdrop-filter: blur(4px); font-size: .9rem; transition: background .25s, border-color .25s; }
+  .hc__arrow:hover { background: var(--accent); border-color: var(--accent); }
+
+  .hc__tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: 26px; border-top: 1px solid var(--line-2); }
+  .hc__tab { position: relative; display: grid; gap: 4px; text-align: left; padding: 14px 14px 16px 0; background: none; border: 0; cursor: pointer; color: var(--ink-3); transition: color .3s; }
+  .hc__tab + .hc__tab { padding-left: 14px; border-left: 1px solid var(--line-3); }
+  .hc__tab .mono { font-size: .66rem; }
+  .hc__tab-t { font-weight: 700; font-stretch: 108%; font-size: .95rem; line-height: 1.2; }
+  .hc__tab:hover, .hc__tab.on { color: var(--heading); }
+  .hc__tab.on .mono { color: var(--accent); }
+  .hc__bar { position: absolute; left: 0; right: 0; top: -1px; height: 2px; overflow: hidden; }
+  .hc__bar i { display: block; height: 100%; width: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+  .hc__tab.done .hc__bar i { transform: scaleX(1); background: var(--line); }
+  @media (max-width: 760px) {
+    .hc { padding-top: 88px; min-height: 0; }
+    .hc__meta { margin-bottom: 10px; }
+    .hc__h { margin: 8px 0 10px; }
+    .hc__d { font-size: .95rem; }
+    .hc__cta { margin-top: 16px; }
+    .hc__cta .btn { padding: .8em 1.1em; }
+    .hc__in { gap: 18px; }
+    .hc__nav { top: 12px; bottom: auto; right: 12px; }
+    .hc__nav .hc__arrow { width: 34px; height: 34px; }
+    .hc__tick.tr { display: none; }
+    .hc__chips { left: 12px; bottom: 12px; }
+    .hc__tabs { margin-top: 14px; }
+    .hc__tabs { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .hc__tab-t { display: none; }
+    .hc__tab { padding: 12px 0; justify-items: center; }
+    .hc__tab + .hc__tab { padding-left: 0; }
+  }
+</style>

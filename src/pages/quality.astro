@@ -24,7 +24,7 @@ const lab = [
   <section class="section">
     <div class="wrap qgrid" data-stagger>
       <article class="q ticks">
-        <span class="mono amber">UL</span>
+        <span class="mono accent">UL</span>
         <h2 class="h-l">{company.ul}</h2>
         <p>Underwriters Laboratories file covering our flame-retardant potting compounds, rated UL 94 V-0.</p>
         <table class="spec">
@@ -34,19 +34,19 @@ const lab = [
         </table>
       </article>
       <article class="q ticks">
-        <span class="mono amber">ISO</span>
+        <span class="mono accent">ISO</span>
         <h2 class="h-l">9001:2015</h2>
         <p>Quality management system certified by ICS, accredited by NABCB (QMS 009). Registration {company.iso.reg}.</p>
         <a href="/img/awards/a9.jpg" data-lightbox data-caption="ISO 9001:2015 · Reg. RQ91/610 · ICS / NABCB" class="btn">View certificate mark <span class="arr">→</span></a>
       </article>
       <article class="q ticks">
-        <span class="mono amber">RoHS</span>
+        <span class="mono accent">RoHS</span>
         <h2 class="h-l">{rohs.length} grades</h2>
         <p>Our potting compound range is RoHS compliant. Filter the finder for RoHS-compliant grades.</p>
         <a href="/products/?attr=rohs" class="btn">See RoHS grades <span class="arr">→</span></a>
       </article>
       <article class="q ticks">
-        <span class="mono amber">GREEN CHANNEL</span>
+        <span class="mono accent">GREEN CHANNEL</span>
         <h2 class="h-l">QS 9000</h2>
         <p>Products made to meet ISI and international standards. Many QS 9000 customers accept our material on a green-channel basis, without incoming inspection.</p>
       </article>
@@ -67,7 +67,7 @@ const lab = [
     </div>
   </section>
 
-  <section class="section awards">
+  <section class="section awards" id="awards">
     <div class="wrap">
       <p class="eyebrow" data-reveal>Recognition</p>
       <h2 class="h-l" data-split>Awards & certificates</h2>
@@ -75,7 +75,7 @@ const lab = [
         {awards.map((a) => (
           <a class="aw__it" href={`/img/awards/${a.img}`} data-lightbox data-caption={`${a.t} · ${a.y}`}>
             <div class="aw__img"><img src={`/img/awards/${a.img}`} alt={a.t} loading="lazy" /></div>
-            <span class="mono amber">{a.y}</span>
+            <span class="mono accent">{a.y}</span>
             <h3>{a.t}</h3>
             <p>{a.d}</p>
           </a>
@@ -91,12 +91,12 @@ const lab = [
   .q { border: 1px solid var(--line-2); padding: clamp(24px, 3vw, 40px); display: grid; gap: 16px; align-content: start; }
   .q p { color: var(--ink-2); margin: 0; }
   .q .btn { justify-self: start; }
-  .q th a:hover { color: var(--amber); }
+  .q th a:hover { color: var(--accent); }
   .lab { border-top: 1px solid var(--line-2); }
   .lab .lede { margin: 22px 0 30px; }
   .lab__list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line-2); }
   .lab__list li { display: grid; grid-template-columns: 50px 1fr; padding: 24px 0; border-bottom: 1px solid var(--line-2); }
-  .lab__list .mono { color: var(--amber); }
+  .lab__list .mono { color: var(--accent); }
   .lab__list h3 { font-size: 1.5rem; font-stretch: 115%; }
   .lab__list p { margin: 6px 0 0; color: var(--ink-2); }
   .awards { border-top: 1px solid var(--line-2); }
