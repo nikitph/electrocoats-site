@@ -71,6 +71,9 @@ const index = [
   .nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .4s, backdrop-filter .4s, transform .5s var(--ease), border-color .4s; border-bottom: 1px solid transparent; }
   .nav.scrolled { background: var(--nav-bg); backdrop-filter: blur(16px) saturate(1.2); border-bottom-color: var(--line-2); }
   .nav.hide { transform: translateY(-100%); }
+  /* backdrop-filter/transform make .nav the containing block for the fixed drawer,
+     which would shrink it to the bar's height; drop both while the menu is open */
+  .nav.open { backdrop-filter: none; -webkit-backdrop-filter: none; transform: none; background: var(--bg); z-index: 70; }
   .nav__in { display: flex; align-items: center; gap: 18px; height: 84px; }
   .brand { margin-right: auto; }
   .logo-plate { display: block; background: var(--plate); padding: 4px 8px; border-radius: 2px; }
