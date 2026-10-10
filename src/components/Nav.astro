@@ -1,0 +1,82 @@
+---
+import { nav, company } from '../data/site';
+import { APPLICATIONS, products } from '../data/products';
+const path = Astro.url.pathname;
+const count = (k: string) => products.filter((p) => p.apps.includes(k as any)).length;
+---
+<header class="nav" data-nav>
+  <div class="nav__in wrap">
+    <a href="/" class="brand" aria-label={`${company.short} home`}>
+      <span class="logo-plate"><img src="/img/logo.svg" alt={company.name} width="359" height="101" /></span>
+    </a>
+    <nav class="links" aria-label="Primary">
+      {nav.map((n) => (
+        <div class={`li ${n.label === 'Products' ? 'has-mega' : ''}`}>
+          <a href={n.href} class:list={[{ on: path.startsWith(n.href) }]}>{n.label}</a>
+          {n.label === 'Products' && (
+            <div class="mega">
+              <div class="mega__in">
+                <p class="eyebrow">By application</p>
+                <ul>
+                  {Object.entries(APPLICATIONS).map(([k, v]) => (
+                    <li><a href={`/products/?app=${k}`}><span>{v.label}</span><span class="mono">{String(count(k)).padStart(2, '0')}</span></a></li>
+                  ))}
+                </ul>
+                <a class="btn solid" href="/products/">Open product finder <span class="arr">→</span></a>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </nav>
+    <button class="theme" type="button" data-theme-toggle aria-label="Switch colour theme"><span class="mono">◐</span></button>
+    <a class="btn nav__cta" href="/contact/#enquiry">Enquire <span class="arr">→</span></a>
+    <button class="burger" aria-label="Menu" aria-expanded="false" data-burger><span></span><span></span></button>
+  </div>
+  <div class="nav__progress" data-progress></div>
+  <div class="drawer" data-drawer>
+    {nav.map((n, i) => <a href={n.href}><span class="mono">0{i + 1}</span>{n.label}</a>)}
+    <a href={`tel:${company.phones[0].tel}`} class="mono">{company.phones[0].label}</a>
+  </div>
+</header>
+
+<style>
+  .nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .4s, backdrop-filter .4s, transform .5s var(--ease); }
+  .nav.scrolled { background: var(--nav-bg); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line-3); }
+  .nav.hide { transform: translateY(-100%); }
+  .nav__in { display: flex; align-items: center; gap: 24px; height: 80px; }
+  .brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
+  .logo-plate { display: block; background: var(--plate); padding: 4px 8px; border-radius: 2px; }
+  .logo-plate img { height: 54px; width: auto; }
+  @media (max-width: 520px) { .logo-plate img { height: 44px; } }
+  .theme { width: 40px; height: 40px; background: none; border: 1px solid var(--line-2); color: var(--ink); cursor: pointer; transition: border-color .3s, transform .5s var(--ease); }
+  .theme:hover { border-color: var(--amber); transform: rotate(180deg); }
+  .links { display: none; gap: 4px; }
+  .li { position: relative; }
+  .li > a { display: block; padding: 10px 14px; font-family: var(--mono); font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); position: relative; }
+  .li > a::after { content: ''; position: absolute; left: 14px; right: 14px; bottom: 4px; height: 1px; background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform .4s var(--ease); }
+  .li > a:hover, .li > a.on { color: var(--ink); }
+  .li > a:hover::after, .li > a.on::after { transform: scaleX(1); }
+  .mega { position: absolute; top: 100%; left: -20px; padding-top: 14px; opacity: 0; visibility: hidden; transform: translateY(8px); transition: all .35s var(--ease); }
+  .has-mega:hover .mega, .has-mega:focus-within .mega { opacity: 1; visibility: visible; transform: none; }
+  .mega__in { width: 360px; background: var(--bg-2); border: 1px solid var(--line-2); padding: 22px; display: grid; gap: 14px; }
+  .mega ul { list-style: none; margin: 0; padding: 0; }
+  .mega li a { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line-3); transition: color .2s, padding .3s var(--ease); }
+  .mega li a:hover { color: var(--amber); padding-left: 6px; }
+  .nav__cta { display: none; padding: .7em 1.1em; }
+  .nav__progress { position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%; background: var(--amber); transform: scaleX(0); transform-origin: left; }
+  .burger { width: 40px; height: 40px; background: none; border: 1px solid var(--line-2); display: grid; place-content: center; gap: 6px; cursor: pointer; }
+  .burger span { width: 18px; height: 1px; background: var(--ink); transition: transform .4s var(--ease); }
+  .nav.open .burger span:first-child { transform: translateY(3.5px) rotate(45deg); }
+  .nav.open .burger span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+  .drawer { position: fixed; inset: 80px 0 0; background: var(--bg); display: flex; flex-direction: column; padding: 24px var(--gutter); gap: 4px; clip-path: inset(0 0 100% 0); transition: clip-path .6s var(--ease); }
+  .nav.open .drawer { clip-path: inset(0); }
+  .drawer a { display: flex; align-items: baseline; gap: 16px; font-size: 2.2rem; font-weight: 800; font-stretch: 118%; padding: 10px 0; border-bottom: 1px solid var(--line-3); }
+  .drawer a.mono { font-size: 1rem; font-weight: 400; color: var(--amber); border: 0; margin-top: 16px; }
+  .drawer .mono { color: var(--ink-3); }
+  @media (min-width: 1000px) {
+    .links { display: flex; }
+    .nav__cta { display: inline-flex; }
+    .burger, .drawer { display: none; }
+  }
+</style>

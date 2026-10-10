@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import IsoPack from '../components/iso/IsoPack.astro';
+---
+<Base title="Page not found" description="This page has moved." noindex>
+  <section class="phead nf">
+    <div class="wrap nf__in">
+      <div>
+        <p class="eyebrow">Error 404</p>
+        <h1 class="h-xl" data-split>Nothing <span class="outline">in this pail.</span></h1>
+        <p class="lede">The page may have moved when we rebuilt the site. Every product now lives in the finder.</p>
+        <div class="nf__cta"><a class="btn solid" href="/products/">Product finder <span class="arr">→</span></a><a class="btn" href="/">Home</a></div>
+      </div>
+      <div class="nf__fig"><IsoPack pack="pail" code="404" /></div>
+    </div>
+  </section>
+</Base>
+<style>
+  .nf { border: 0; min-height: 90vh; }
+  .nf__in { display: grid; gap: 40px; align-items: center; grid-template-columns: 1fr; }
+  @media (min-width: 860px) { .nf__in { grid-template-columns: 1.4fr .6fr; } }
+  .nf__cta { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+  .nf__fig :global(.lid) { transform: translateY(-22px) rotate(-6deg); }
+</style>

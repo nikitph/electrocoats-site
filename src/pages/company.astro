@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import IsoPlant from '../components/iso/IsoPlant.astro';
+import Enquiry from '../components/Enquiry.astro';
+import { company, timeline, capabilities, testimonials } from '../data/site';
+---
+<Base title="Company: 30+ years of thermoset formulation" description="Electrocoating & Insulation Technologies Pvt. Ltd. (EITPL), Pune: epoxy, polyurethane, phenolic and silicone resin formulations for electrical insulation. Two plants, 20 t/day, ISO 9001:2015.">
+  <section class="phead">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Home</a><span>/</span><span>Company</span></div>
+      <p class="eyebrow">About EITPL</p>
+      <h1 class="h-xl" data-split>Formulators <span class="outline">first.</span></h1>
+      <p class="lede">We manufacture and sell epoxy resins, hardeners, polyurethane and resin formulations, and have spent more than 30 years formulating them for electrical and electronic insulation.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split">
+      <div class="prose" data-reveal>
+        <p class="big">Epoxy, polyurethane, phenolic and silicone resins are thermoset polymers. We formulate them for electrical and electronic applications: protective coatings for devices, high electro-mechanical casting resins, flame-retardant resins, potting compounds, polyesterimide trickle resins and automotive battery compounds.</p>
+        <p>Our UL-approved potting compounds are listed under file {company.ul}, and the range is RoHS compliant. Our products are used and accepted by customers across India and in export markets.</p>
+      </div>
+      <ul class="caps" data-stagger>
+        {capabilities.map((c, i) => <li><span class="mono">0{i + 1}</span>{c}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section vision">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Vision</p>
+      <p class="vision__q" data-split>To be a process partner to our customers in resins and their formulations, <span class="amber">rather than only a vendor.</span></p>
+    </div>
+  </section>
+
+  <section class="section tl">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Timeline</p>
+      <h2 class="h-l" data-split>Milestones</h2>
+      <ol class="tl__list" data-timeline>
+        {timeline.map((t) => (
+          <li data-reveal>
+            <span class="tl__y">{t.y}</span>
+            <div><h3>{t.t}</h3><p>{t.d}</p></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split r">
+      <IsoPlant />
+      <div>
+        <p class="eyebrow" data-reveal>Facilities</p>
+        <h2 class="h-l" data-split>Two plants around Pune.</h2>
+        <p class="lede" data-reveal>Production facilities of 3,000 m² and 6,500 m² with a combined capacity of 20 tonnes a day, plus a fully equipped R&D and testing laboratory.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section lead">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow" data-reveal>Leadership</p>
+        <h2 class="h-l" data-split>{company.md}</h2>
+        <p class="mono amber" data-reveal>Managing Director</p>
+      </div>
+      <div class="prose" data-reveal>
+        <p>The company is run by experienced professionals at every level, with in-depth process knowledge and close attention to customer requirements. Alongside quality for customers, we treat skills development and growth for our own people as a priority.</p>
+        <blockquote class="pull">“{testimonials[1].q}”<footer class="mono">{testimonials[1].n} · {testimonials[1].c}</footer></blockquote>
+      </div>
+    </div>
+  </section>
+
+  <Enquiry />
+</Base>
+<style>
+  .prose p { color: var(--ink-2); font-size: 1.05rem; max-width: 62ch; }
+  .prose .big { color: var(--ink); font-size: clamp(1.2rem, 1.8vw, 1.5rem); line-height: 1.45; }
+  .caps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-2); }
+  .caps li { display: flex; gap: 20px; align-items: baseline; padding: 22px 0; border-bottom: 1px solid var(--line-2); font-size: clamp(1.2rem, 2vw, 1.7rem); font-weight: 700; font-stretch: 112%; }
+  .caps .mono { color: var(--amber); }
+  .vision { border-block: 1px solid var(--line-2); }
+  .vision__q { font-size: clamp(1.8rem, 4.4vw, 4rem); font-weight: 800; font-stretch: 115%; line-height: 1.05; letter-spacing: -.02em; margin: 24px 0 0; max-width: 20ch; }
+  .tl h2 { margin: 16px 0 48px; }
+  .tl__list { list-style: none; margin: 0; padding: 0 0 0 0; position: relative; }
+  .tl__list::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--line-2); }
+  .tl__list li { display: grid; grid-template-columns: 1fr; gap: 6px; padding: 26px 0 26px 32px; position: relative; border-bottom: 1px solid var(--line-3); }
+  .tl__list li::before { content: ''; position: absolute; left: -4px; top: 36px; width: 9px; height: 9px; border: 1px solid var(--amber); background: var(--bg); transform: rotate(45deg); }
+  @media (min-width: 760px) { .tl__list li { grid-template-columns: 180px 1fr; } }
+  .tl__y { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900; font-stretch: 125%; line-height: 1; color: transparent; -webkit-text-stroke: 1px var(--amber); }
+  .tl__list h3 { font-size: 1.35rem; font-stretch: 112%; }
+  .tl__list p { color: var(--ink-2); margin: 6px 0 0; }
+  .lead { border-top: 1px solid var(--line-2); }
+  .pull { margin: 28px 0 0; padding: 22px 0 0 22px; border-left: 1px solid var(--amber); color: var(--ink); font-size: 1.1rem; }
+  .pull footer { color: var(--ink-3); margin-top: 12px; }
+</style>

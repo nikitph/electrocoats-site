@@ -1,0 +1,52 @@
+---
+/** Two plants (3,000 m² and 6,500 m²) with a reactor, drums and a lab block. */
+import { P, box, cyl, poly, line, band, ring, viewBox, type V3 } from '../../lib/iso';
+
+let s = '';
+// ground plate grid
+let g = '';
+for (let x = 0; x <= 420; x += 30) g += line([x, 0, 0], [x, 260, 0]);
+for (let y = 0; y <= 260; y += 30) g += line([0, y, 0], [420, y, 0]);
+s += `<path class="ln2" d="${g}" opacity=".6"/>`;
+
+// sawtooth-roof hall
+function hall(x: number, y: number, w: number, d: number, h: number, teeth: number) {
+  let o = box(x, y, 0, w, d, h);
+  const tw = w / teeth;
+  for (let i = 0; i < teeth; i++) {
+    const x0 = x + i * tw, x1 = x0 + tw;
+    const slope = poly([[x0, y, h], [x1, y, h + 16], [x1, y + d, h + 16], [x0, y + d, h]]);
+    const glass = poly([[x1, y, h], [x1, y + d, h], [x1, y + d, h + 16], [x1, y, h + 16]]);
+    const tri = poly([[x0, y + d, h], [x1, y + d, h], [x1, y + d, h + 16]]);
+    o += `<path class="f-t ln" d="${slope}"/><path class="f-r ln" d="${glass}"/><path class="f-l ln" d="${tri}"/>`;
+  }
+  // doors
+  o += `<path class="ln" fill="none" d="${poly([[x + w, y + d * .3, 0], [x + w, y + d * .55, 0], [x + w, y + d * .55, h * .7], [x + w, y + d * .3, h * .7]])}"/>`;
+  return o;
+}
+const A: V3 = [30, 20, 0], B: V3 = [200, 120, 0];
+s += hall(A[0], A[1], 130, 90, 40, 4);
+// silo/reactor next to plant A
+s += cyl(190, 50, 0, 18, 70) + band(190, 50, 24, 18, 'ln2') + band(190, 50, 48, 18, 'ln2');
+s += `<path class="ln" fill="none" d="${line([190, 50, 70], [190, 50, 82])}M${P(190, 50, 82)}L${P(150, 50, 82)}L${P(150, 50, 56)}"/>`;
+s += hall(B[0], B[1], 190, 120, 46, 5);
+// drums pallet
+for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) s += cyl(60 + i * 22, 150 + j * 22, 0, 9, 22, { top: j === 1 && i === 2 ? 'am-f' : 'f-t' });
+// lab block
+s += box(40, 200, 0, 70, 46, 30);
+s += cyl(75, 223, 30, 6, 10, { top: 'am-f', right: 'f-r' }) + ring(75, 223, 40, 3, 'am');
+// path / road
+s += `<path class="ln2 dash" d="${line([0, 128, 0.2], [190, 128, 0.2])}${line([175, 128, 0.2], [175, 260, 0.2])}"/>`;
+
+const la = P(95, 65, 66), lb = P(295, 180, 72), lc = P(75, 223, 46);
+const vb = viewBox([0, 0, 0], [420, 260, 90], 30);
+---
+<svg class="iso iso-plant" viewBox={vb} aria-label="Isometric drawing of the two Pune plants and lab" role="img">
+  <g data-draw set:html={s} />
+  <g class="tags">
+    <g data-tag><path class="am" d={`M${la[0]},${la[1]}v-40h26`} fill="none" /><circle class="am-f" cx={la[0]} cy={la[1]} r="2.5" /><text class="lbl-a" x={la[0] + 30} y={la[1] - 37}>PLANT 01 · 3,000 m²</text></g>
+    <g data-tag><path class="am" d={`M${lb[0]},${lb[1]}v-40h26`} fill="none" /><circle class="am-f" cx={lb[0]} cy={lb[1]} r="2.5" /><text class="lbl-a" x={lb[0] + 30} y={lb[1] - 37}>PLANT 02 · 6,500 m²</text></g>
+    <g data-tag><path class="am" d={`M${lc[0]},${lc[1]}v-30h-26`} fill="none" /><circle class="am-f" cx={lc[0]} cy={lc[1]} r="2.5" /><text class="lbl-a" x={lc[0] - 30} y={lc[1] - 27} text-anchor="end">R&amp;D · TEST LAB</text></g>
+  </g>
+</svg>
+<style>.iso-plant { width: 100%; height: auto; }</style>

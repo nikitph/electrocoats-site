@@ -1,0 +1,46 @@
+---
+import IsoPack from './iso/IsoPack.astro';
+import { CHEMISTRIES, APPLICATIONS, type Product } from '../data/products';
+interface Props { p: Product; idx?: number }
+const { p, idx = 0 } = Astro.props;
+const chem = CHEMISTRIES[p.chemistry];
+const search = [p.name, p.summary, chem.label, ...p.apps.map((a) => APPLICATIONS[a].label), ...(p.uses ?? [])].join(' ').toLowerCase();
+---
+<a href={`/products/${p.slug}/`} class="card" data-card data-tilt
+  data-app={p.apps.join(' ')} data-process={p.process.join(' ')} data-chem={p.chemistry} data-attr={p.attrs.join(' ')} data-search={search}
+  data-flip-id={p.slug}>
+  <span class="card__idx mono">{String(idx + 1).padStart(2, '0')}</span>
+  <span class="card__chem mono">{chem.label}</span>
+  <div class="card__fig"><IsoPack pack={p.pack} code={chem.code} /></div>
+  <h3 class="card__name">{p.name}</h3>
+  <p class="card__sum">{p.summary}</p>
+  <div class="card__tags">
+    {p.attrs.includes('ul') && <span class="chip ul">UL 94 V-0</span>}
+    {p.attrs.includes('fr') && !p.attrs.includes('ul') && <span class="chip">FR</span>}
+    {p.attrs.includes('classF') && <span class="chip">Class F</span>}
+    {p.attrs.includes('rt') && <span class="chip">RT cure</span>}
+    {p.stub && <span class="chip">Data on request</span>}
+  </div>
+  <span class="card__go" aria-hidden="true">→</span>
+</a>
+<style>
+  .card {
+    position: relative; display: flex; flex-direction: column; gap: 10px; padding: 22px 22px 24px;
+    border: 1px solid var(--line-2); background: var(--panel);
+    transition: border-color .4s var(--ease), background .4s; transform-style: preserve-3d; min-height: 100%;
+  }
+  .card::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 0%), rgba(244,166,42,.08), transparent 40%); opacity: 0; transition: opacity .4s; }
+  .card:hover { border-color: rgba(244,166,42,.6); }
+  .card:hover::after { opacity: 1; }
+  .card__idx { position: absolute; top: 16px; left: 18px; color: var(--ink-3); font-size: .66rem; }
+  .card__chem { position: absolute; top: 16px; right: 18px; color: var(--amber); font-size: .66rem; text-transform: uppercase; letter-spacing: .12em; }
+  .card__fig { width: 62%; max-width: 170px; margin: 18px auto 6px; transform: translateZ(30px); }
+  .card:hover :global(.lid) { transform: translateY(-16px); }
+  .card:hover :global(.liq) { opacity: 1 !important; }
+  .card__name { font-size: 1.35rem; font-stretch: 112%; }
+  .card__sum { color: var(--ink-2); font-size: .92rem; margin: 0; line-height: 1.5; flex: 1; }
+  .card__tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .card__go { position: absolute; right: 20px; bottom: 18px; color: var(--amber); transform: translateX(-6px); opacity: 0; transition: all .4s var(--ease); }
+  .card:hover .card__go { transform: none; opacity: 1; }
+  .card[hidden] { display: none; }
+</style>

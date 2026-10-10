@@ -1,0 +1,77 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { company } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  jsonld?: object;
+  noindex?: boolean;
+}
+const { title, description, jsonld, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const fullTitle = title.includes(company.short) ? title : `${title} | ${company.short}`;
+const org = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: company.name,
+  alternateName: company.short,
+  url: 'https://electrocoats.com',
+  email: company.email,
+  telephone: company.phones[0].tel,
+  address: { '@type': 'PostalAddress', streetAddress: 'Plot No. 1, S. No. 228, Hinjawadi–Maan Road, Hinjawadi', addressLocality: 'Pune', postalCode: '411057', addressRegion: 'Maharashtra', addressCountry: 'IN' },
+};
+---
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="theme-color" content="#f3f0e8" />
+    <link rel="icon" href="/img/mark.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <script is:inline>(function(){function t(){var d=document.documentElement;d.classList.add('js');try{if(localStorage.getItem('theme')==='dark')d.dataset.theme='dark';else delete d.dataset.theme}catch(e){}}t();document.addEventListener('astro:after-swap',t)})()</script>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonld ? [org, jsonld] : org)} />
+    <ClientRouter fallback="swap" />
+  </head>
+  <body>
+    <div class="bg-grid" aria-hidden="true" transition:persist></div>
+    <a class="skip" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <a class="wa" href={`https://wa.me/${company.whatsapp}`} target="_blank" rel="noopener" aria-label="Chat on WhatsApp" transition:persist>
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.6-.3Z"/></svg>
+    </a>
+    <script>
+      import { boot } from '../scripts/motion';
+      document.addEventListener('astro:page-load', boot);
+    </script>
+  </body>
+</html>
+<style is:global>
+  .skip { position: absolute; left: -9999px; top: 8px; z-index: 100; background: var(--amber); color: var(--on-accent); padding: 8px 12px; font-family: var(--mono); }
+  .skip:focus { left: 8px; }
+  .wa {
+    position: fixed; right: 18px; bottom: 18px; z-index: 40; width: 52px; height: 52px; display: grid; place-items: center;
+    background: var(--bg-2); color: var(--amber); border: 1px solid var(--amber); border-radius: 50%;
+    transition: transform .4s var(--ease), background .3s, color .3s;
+  }
+  .wa:hover { transform: translateY(-3px) rotate(-8deg); background: var(--amber); color: var(--on-accent); }
+</style>

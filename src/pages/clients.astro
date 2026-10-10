@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import Enquiry from '../components/Enquiry.astro';
+import { clientGroups, testimonials } from '../data/site';
+const total = clientGroups.reduce((n, g) => n + g.clients.length, 0);
+---
+<Base title="Clients: battery, automotive, electrical & PCB manufacturers" description="Electrocoats supplies epoxy and PU compounds to Exide, Amara Raja, Tata Motors, Bajaj Auto, Stanley Black & Decker, BHEL, Cyient DLM and more, in India and abroad.">
+  <section class="phead">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Home</a><span>/</span><span>Clients</span></div>
+      <p class="eyebrow">Clients</p>
+      <h1 class="h-xl" data-split>Inside <span class="outline">{total} brands</span> you know.</h1>
+      <p class="lede">Battery makers, automotive OEMs and tier-ones, electrical and electronics manufacturers, PCB assemblers and export customers.</p>
+    </div>
+  </section>
+
+  {clientGroups.map((g, gi) => (
+    <section class="grp">
+      <div class="wrap">
+        <div class="grp__h">
+          <span class="mono amber">0{gi + 1}</span>
+          <h2 class="h-m" data-split>{g.name}</h2>
+          <span class="mono grp__n">{g.clients.length} clients</span>
+        </div>
+        <ul class="logos" data-stagger>
+          {g.clients.map((c) => (
+            <li>
+              {c.logo ? <img src={`/img/clients/${c.logo}.png`} alt="" width="225" height="120" loading="lazy" /> : null}
+              <span class="mono">{c.n}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  ))}
+
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Feedback</p>
+      <div class="vgrid" data-stagger>
+        {testimonials.map((t) => (
+          <figure><blockquote>“{t.q}”</blockquote><figcaption class="mono"><b>{t.n}</b><br />{t.c}</figcaption></figure>
+        ))}
+      </div>
+    </div>
+  </section>
+  <Enquiry />
+</Base>
+<style>
+  .grp { padding: 56px 0; border-bottom: 1px solid var(--line-2); }
+  .grp__h { display: flex; align-items: baseline; gap: 18px; margin-bottom: 28px; flex-wrap: wrap; }
+  .grp__n { margin-left: auto; color: var(--ink-3); }
+  .logos { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  .logos li { border: 1px solid var(--line-2); background: var(--panel); display: grid; grid-template-rows: 1fr auto; transition: border-color .3s, transform .4s var(--ease); }
+  .logos li:hover { border-color: var(--amber); transform: translateY(-3px); }
+  .logos img { width: 100%; height: 96px; object-fit: contain; background: #fff; padding: 10px; }
+  .logos span { padding: 10px 12px; font-size: .68rem; color: var(--ink-2); border-top: 1px solid var(--line-3); }
+  .vgrid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); margin-top: 28px; }
+  .vgrid figure { margin: 0; padding: 24px; border: 1px solid var(--line-2); display: grid; gap: 16px; align-content: space-between; }
+  .vgrid blockquote { margin: 0; color: var(--ink-2); }
+  .vgrid figcaption { color: var(--ink-3); }
+  .vgrid b { color: var(--ink); font-weight: 500; }
+</style>

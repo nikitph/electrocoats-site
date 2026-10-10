@@ -1,0 +1,14 @@
+---
+/** Renders a legal document stored as [{h}|{p}] blocks. */
+interface Props { blocks: ({ h: string } | { p: string })[] }
+const { blocks } = Astro.props;
+---
+<div class="legal">
+  {blocks.map((b) => ('h' in b ? <h2 class="mono">{b.h}</h2> : <p class={/^\(([ivx]+)\)|^[a-d]\)/.test(b.p) ? 'li' : ''}>{b.p}</p>))}
+</div>
+<style>
+  .legal { max-width: 78ch; }
+  .legal h2 { color: var(--amber); font-size: .78rem; letter-spacing: .14em; font-weight: 500; margin: 48px 0 14px; padding-top: 18px; border-top: 1px solid var(--line-2); }
+  .legal p { color: var(--ink-2); margin: 0 0 1em; }
+  .legal p.li { padding-left: 1.6em; }
+</style>

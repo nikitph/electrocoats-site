@@ -1,0 +1,111 @@
+---
+import Base from '../layouts/Base.astro';
+import Enquiry from '../components/Enquiry.astro';
+import { company, awards } from '../data/site';
+import { products } from '../data/products';
+const ulGrades = products.filter((p) => p.attrs.includes('ul'));
+const rohs = products.filter((p) => p.attrs.includes('rohs'));
+const lab = [
+  { k: 'Electrical', d: 'Electrical property testing of resins and cured systems.' },
+  { k: 'Analytical', d: 'Analytical testing of raw materials and finished batches.' },
+  { k: 'Physical', d: 'Physical property testing against the product specification.' },
+];
+---
+<Base title="Quality, certifications & test lab" description={`ISO 9001:2015 (Reg. ${company.iso.reg}), UL file ${company.ul} with UL 94 V-0 listed potting compounds, RoHS compliant range and an in-house R&D and testing laboratory.`}>
+  <section class="phead">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Home</a><span>/</span><span>Quality</span></div>
+      <p class="eyebrow">Quality & compliance</p>
+      <h1 class="h-xl" data-split>Proof, <span class="outline">on file.</span></h1>
+      <p class="lede">Certified quality management, independently listed flammability ratings and a lab that tests what leaves the plant. The detail is below.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap qgrid" data-stagger>
+      <article class="q ticks">
+        <span class="mono amber">UL</span>
+        <h2 class="h-l">{company.ul}</h2>
+        <p>Underwriters Laboratories file covering our flame-retardant potting compounds, rated UL 94 V-0.</p>
+        <table class="spec">
+          <tbody>
+            {ulGrades.map((p) => <tr><th><a href={`/products/${p.slug}/`}>{p.name}</a></th><td>{p.specs?.find(([k]) => k === 'UL file')?.[1].split('·')[1]?.trim()} · V-0</td></tr>)}
+          </tbody>
+        </table>
+      </article>
+      <article class="q ticks">
+        <span class="mono amber">ISO</span>
+        <h2 class="h-l">9001:2015</h2>
+        <p>Quality management system certified by ICS, accredited by NABCB (QMS 009). Registration {company.iso.reg}.</p>
+        <a href="/img/awards/a9.jpg" data-lightbox data-caption="ISO 9001:2015 · Reg. RQ91/610 · ICS / NABCB" class="btn">View certificate mark <span class="arr">→</span></a>
+      </article>
+      <article class="q ticks">
+        <span class="mono amber">RoHS</span>
+        <h2 class="h-l">{rohs.length} grades</h2>
+        <p>Our potting compound range is RoHS compliant. Filter the finder for RoHS-compliant grades.</p>
+        <a href="/products/?attr=rohs" class="btn">See RoHS grades <span class="arr">→</span></a>
+      </article>
+      <article class="q ticks">
+        <span class="mono amber">GREEN CHANNEL</span>
+        <h2 class="h-l">QS 9000</h2>
+        <p>Products made to meet ISI and international standards. Many QS 9000 customers accept our material on a green-channel basis, without incoming inspection.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section lab">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow" data-reveal>R&D and test laboratory</p>
+        <h2 class="h-l" data-split>Tested in house before it ships.</h2>
+        <p class="lede" data-reveal>A modern, fully equipped R&D and testing laboratory with electrical, analytical and physical test instruments from reputed manufacturers worldwide. It handles batch release, customer trials and new-product development.</p>
+        <a href="/contact/#enquiry" class="btn" data-reveal>Request the equipment list <span class="arr">→</span></a>
+      </div>
+      <ol class="lab__list" data-stagger>
+        {lab.map((l, i) => <li><span class="mono">0{i + 1}</span><div><h3>{l.k}</h3><p>{l.d}</p></div></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section awards">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Recognition</p>
+      <h2 class="h-l" data-split>Awards & certificates</h2>
+      <div class="aw" data-stagger>
+        {awards.map((a) => (
+          <a class="aw__it" href={`/img/awards/${a.img}`} data-lightbox data-caption={`${a.t} · ${a.y}`}>
+            <div class="aw__img"><img src={`/img/awards/${a.img}`} alt={a.t} loading="lazy" /></div>
+            <span class="mono amber">{a.y}</span>
+            <h3>{a.t}</h3>
+            <p>{a.d}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <Enquiry />
+</Base>
+<style>
+  .qgrid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 860px) { .qgrid { grid-template-columns: 1fr 1fr; } }
+  .q { border: 1px solid var(--line-2); padding: clamp(24px, 3vw, 40px); display: grid; gap: 16px; align-content: start; }
+  .q p { color: var(--ink-2); margin: 0; }
+  .q .btn { justify-self: start; }
+  .q th a:hover { color: var(--amber); }
+  .lab { border-top: 1px solid var(--line-2); }
+  .lab .lede { margin: 22px 0 30px; }
+  .lab__list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line-2); }
+  .lab__list li { display: grid; grid-template-columns: 50px 1fr; padding: 24px 0; border-bottom: 1px solid var(--line-2); }
+  .lab__list .mono { color: var(--amber); }
+  .lab__list h3 { font-size: 1.5rem; font-stretch: 115%; }
+  .lab__list p { margin: 6px 0 0; color: var(--ink-2); }
+  .awards { border-top: 1px solid var(--line-2); }
+  .awards h2 { margin: 16px 0 48px; }
+  .aw { display: grid; gap: 28px 16px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .aw__it { display: grid; gap: 8px; align-content: start; }
+  .aw__img { aspect-ratio: 4/3; overflow: hidden; border: 1px solid var(--line-2); background: var(--bg-2); }
+  .aw__img img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
+  .aw__it:hover img { transform: scale(1.05); }
+  .aw__it h3 { font-size: 1.05rem; font-stretch: 108%; font-weight: 700; line-height: 1.2; }
+  .aw__it p { margin: 0; color: var(--ink-3); font-size: .85rem; }
+</style>

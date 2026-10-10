@@ -1,0 +1,65 @@
+---
+/** Container glyph for product cards/pages. `.lid` lifts on hover; `.liq` is the amber surface revealed under it. */
+import { P, ER, box, cyl, ring, band, line, viewBox } from '../../lib/iso';
+import type { Product } from '../../data/products';
+
+interface Props { pack: Product['pack']; code: string; class?: string }
+const { pack, code, class: cls = '' } = Astro.props;
+
+let body = '', lid = '', liq = '', label: [number, number] = [0, 0];
+const ell = (x: number, y: number, z: number, r: number, c: string) => {
+  const { rx, ry } = ER(r); const [cx, cy] = P(x, y, z);
+  return `<ellipse class="${c}" cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"/>`;
+};
+
+switch (pack) {
+  case 'pail':
+    body = cyl(0, 0, 0, 34, 52) + band(0, 0, 10, 34, 'ln2') + band(0, 0, 44, 34, 'ln2');
+    liq = ell(0, 0, 50, 31, 'am-f liq');
+    lid = cyl(0, 0, 52, 36, 6) + `<path class="ln none" d="M${P(-30, 0, 58)}Q${P(0, 0, 90)} ${P(0, -30, 58)}" transform="translate(0,0)"/>`;
+    label = P(0, 34, 26) as [number, number];
+    break;
+  case 'drum':
+    body = cyl(0, 0, 0, 30, 80) + band(0, 0, 26, 30, 'ln2') + band(0, 0, 54, 30, 'ln2');
+    liq = ell(0, 0, 78, 27, 'am-f liq');
+    lid = cyl(0, 0, 80, 31, 3) + ring(12, -6, 83, 4, 'ln') + ring(-10, 8, 83, 3, 'ln');
+    label = P(0, 30, 40) as [number, number];
+    break;
+  case 'can':
+    body = cyl(0, 0, 0, 24, 44) + band(0, 0, 8, 24, 'ln2');
+    liq = ell(0, 0, 42, 21, 'am-f liq');
+    lid = cyl(0, 0, 44, 24, 3) + cyl(10, -6, 47, 5, 8);
+    label = P(0, 24, 22) as [number, number];
+    break;
+  case 'bag':
+    body = box(-30, -20, 0, 60, 40, 46) + `<path class="ln2" d="${line([-30, 20, 40], [30, 20, 40])}"/>`;
+    liq = `<path class="am-f liq" d="M${P(-24, -14, 46)}L${P(24, -14, 46)}L${P(24, 14, 46)}L${P(-24, 14, 46)}Z"/>`;
+    lid = box(-30, -20, 46, 60, 40, 6);
+    label = P(0, 20, 22) as [number, number];
+    break;
+  case 'board':
+    body = box(-50, -26, 0, 100, 52, 12) + box(-50, -26, 12, 100, 52, 12);
+    liq = `<path class="am-f liq" d="M${P(-50, -26, 24)}L${P(50, -26, 24)}L${P(50, 26, 24)}L${P(-50, 26, 24)}Z"/>`;
+    lid = box(-50, -26, 24, 100, 52, 12);
+    label = P(0, 26, 18) as [number, number];
+    break;
+  case 'cartridge':
+    body = cyl(-6, -10, 0, 12, 64) + cyl(6, 12, 0, 12, 64);
+    liq = cyl(0, 0, 64, 5, 6, { top: 'am-f liq', right: 'am-f liq', ln: 'am' });
+    lid = cyl(0, 0, 70, 3, 18);
+    label = P(6, 24, 30) as [number, number];
+    break;
+}
+const vb = viewBox([-60, -40, 0], [60, 40, 100], 8);
+---
+<svg class={`iso iso-pack ${cls}`} viewBox={vb} aria-hidden="true" data-draw>
+  <g set:html={body} />
+  <g set:html={liq} />
+  <g class="lid" set:html={lid} />
+  <text class="lbl-a" x={label[0]} y={label[1]} text-anchor="middle">{code}</text>
+</svg>
+<style>
+  .iso-pack { width: 100%; height: auto; }
+  .iso-pack .lid { transition: transform .7s var(--ease); }
+  .iso-pack :global(.liq) { opacity: 0; transition: opacity .5s; }
+</style>

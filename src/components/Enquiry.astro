@@ -1,0 +1,68 @@
+---
+/**
+ * Enquiry / sample request. Posts JSON to PUBLIC_FORM_ENDPOINT when set; otherwise
+ * opens the visitor's mail client with everything filled in. ?product=slug preselects.
+ */
+import { products } from '../data/products';
+import { company } from '../data/site';
+interface Props { product?: string; title?: string }
+const { product = '', title = 'Tell us what you are potting, casting or coating.' } = Astro.props;
+const list = [...products].sort((a, b) => a.name.localeCompare(b.name));
+---
+<section class="enq" id="enquiry">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">Enquiry · sample · datasheet</p>
+      <h2 class="h-l" data-split>{title}</h2>
+      <p class="lede">Share the application and our lab will recommend a grade, then send the datasheet and a sample.</p>
+      <ul class="enq__direct mono">
+        <li><a href={`tel:${company.phones[0].tel}`}>☎ {company.phones[0].label}</a></li>
+        <li><a href={`https://wa.me/${company.whatsapp}`} target="_blank" rel="noopener">◎ WhatsApp the lab</a></li>
+        <li><a href={`mailto:${company.email}`}>✉ {company.email}</a></li>
+      </ul>
+    </div>
+    <form class="enq__form ticks" data-enquiry data-endpoint={company.formEndpoint} data-mailto={company.email} novalidate>
+      <div class="row">
+        <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" required autocomplete="name" /></div>
+        <div class="field"><label for="f-co">Company</label><input id="f-co" name="company" autocomplete="organization" /></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="f-mail">Email</label><input id="f-mail" name="email" type="email" required autocomplete="email" /></div>
+        <div class="field"><label for="f-tel">Phone</label><input id="f-tel" name="phone" type="tel" autocomplete="tel" /></div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="f-prod">Product</label>
+          <select id="f-prod" name="product" data-product-select data-default={product}>
+            <option value="">Not sure, recommend one</option>
+            {list.map((p) => <option value={p.slug} selected={p.slug === product}>{p.name}</option>)}
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-need">I need</label>
+          <select id="f-need" name="need">
+            <option>Sample</option><option>Datasheet</option><option>Quotation</option><option>Technical help</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label for="f-msg">Application details</label><textarea id="f-msg" name="message" placeholder="Component, volume, cure constraints, thermal class…"></textarea></div>
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+      <div class="enq__foot">
+        <button class="btn solid" type="submit">Send enquiry <span class="arr">→</span></button>
+        <p class="mono enq__status" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+</section>
+<style>
+  .enq { padding: clamp(80px, 10vw, 140px) 0; border-top: 1px solid var(--line-2); }
+  .enq__direct { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 10px; }
+  .enq__direct a { color: var(--ink-2); transition: color .2s; }
+  .enq__direct a:hover { color: var(--amber); }
+  .enq__form { display: grid; gap: 26px; padding: clamp(22px, 3vw, 40px); border: 1px solid var(--line-2); background: var(--panel); }
+  .row { display: grid; gap: 26px; grid-template-columns: 1fr; }
+  @media (min-width: 560px) { .row { grid-template-columns: 1fr 1fr; } }
+  .hp { position: absolute; left: -9999px; }
+  .enq__foot { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .enq__status { color: var(--amber); margin: 0; }
+</style>

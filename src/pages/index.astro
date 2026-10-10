@@ -1,0 +1,273 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroScene from '../components/iso/HeroScene.astro';
+import IsoApp from '../components/iso/IsoApp.astro';
+import IsoPlant from '../components/iso/IsoPlant.astro';
+import ProductCard from '../components/ProductCard.astro';
+import Enquiry from '../components/Enquiry.astro';
+import { products, APPLICATIONS, type App } from '../data/products';
+import { proof, certs, clientGroups, testimonials, company } from '../data/site';
+
+const featured = products.filter((p) => p.featured);
+const appBlurb: Record<App, string> = {
+  electrical: 'Potting, casting and coating compounds for transformers, LED drivers, PCBs, motors and switchgear.',
+  battery: 'Lid-to-container and terminal sealing epoxies for lead-acid and VRLA batteries.',
+  civil: 'Water-thinnable epoxies and protective coatings for tanks, terraces and stone.',
+  tooling: 'Boards, pastes, gelcoats and PU systems for patterns, fixtures and moulds.',
+  general: 'Adhesives, putties, diluents and pigment pastes for the workshop.',
+};
+const logos = clientGroups.flatMap((g) => g.clients).filter((c) => c.logo);
+const steps = [
+  { n: '01', t: 'Formulate', d: 'Epoxy, PU, silicone and phenolic systems tuned to your process, thermal class and cure window.' },
+  { n: '02', t: 'Test', d: 'In-house R&D and test lab with electrical, analytical and physical instruments.' },
+  { n: '03', t: 'Produce', d: 'Two plants near Pune with 20 tonnes a day of capacity and ISO 9001:2015 control.' },
+  { n: '04', t: 'Support', d: 'Application engineers on call for trials, line set-up and new-product development.' },
+];
+---
+<Base title="Electrocoats — Epoxy & PU potting, casting and insulation resins, Pune" description="Electrocoating & Insulation Technologies manufactures UL 94 V-0 listed epoxy, polyurethane and silicone potting compounds, casting resins, insulating varnishes and battery sealing epoxies in Pune, India. ISO 9001:2015, RoHS, 20 t/day.">
+
+  <!-- ───────── HERO ───────── -->
+  <section class="hero" data-hero data-crosshair>
+    <div class="wrap hero__in">
+      <div class="hero__copy">
+        <p class="eyebrow" data-hero-in>Thermoset resins · Pune, India</p>
+        <h1 class="h-xl" data-split>Liquid in.<br /><span class="amber">Shield</span> out.</h1>
+        <p class="lede" data-hero-in>Epoxy, polyurethane, silicone and phenolic formulations that pot, cast, coat and seal the electrical world. 30+ years of formulation, UL listed, 20 tonnes a day.</p>
+        <div class="hero__cta" data-hero-in>
+          <a href="/products/" class="btn solid">Find a product <span class="arr">→</span></a>
+          <a href="/contact/#enquiry" class="btn">Request a sample</a>
+        </div>
+        <div class="hero__state mono" data-hero-in>
+          <span class="dot"></span> STATE <b data-hero-state>READY</b>
+          <span class="hero__scroll">SCROLL TO POUR ↓</span>
+        </div>
+      </div>
+      <div class="hero__fig">
+        <HeroScene />
+        <ul class="hero__proof">
+          <li data-proof><span class="mono">UL 94 V-0</span><b>File {company.ul}</b></li>
+          <li data-proof><span class="mono">Thermal class</span><b>F · 155 °C</b></li>
+          <li data-proof><span class="mono">Shrinkage</span><b>&lt; 0.1 %</b></li>
+          <li data-proof><span class="mono">Compliance</span><b>RoHS</b></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── PROOF STRIP ───────── -->
+  <section class="proof">
+    <div class="wrap">
+      <div class="proof__grid" data-stagger>
+        {proof.map((p) => (
+          <div class="proof__it">
+            <div class="proof__v"><span data-count={p.value}>{p.value}</span><span class="amber">{p.suffix}</span></div>
+            <div class="mono proof__u">{p.unit}</div>
+            <p>{p.label}</p>
+          </div>
+        ))}
+      </div>
+      <div class="certs" data-stagger>
+        {certs.map((c) => (
+          <a href="/quality/" class="cert ticks"><span class="mono amber">{c.k}</span><b>{c.v}</b><small>{c.d}</small></a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── APPLICATIONS ───────── -->
+  <section class="section apps">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow" data-reveal>Applications</p>
+        <h2 class="h-l" data-split>Where the amber goes.</h2>
+        <p class="lede" data-reveal>Every drawing marks the spot our product works in amber. Pick an application to see the grades made for it.</p>
+      </div>
+      <div class="apps__grid" data-stagger>
+        {(Object.keys(APPLICATIONS) as App[]).map((k, i) => (
+          <a href={`/products/?app=${k}`} class="app ticks" data-tilt>
+            <span class="mono app__n">0{i + 1} / {APPLICATIONS[k].short}</span>
+            <div class="app__fig"><IsoApp kind={k} /></div>
+            <h3>{APPLICATIONS[k].label}</h3>
+            <p>{appBlurb[k]}</p>
+            <span class="mono app__c">{products.filter((p) => p.apps.includes(k)).length} grades →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── FEATURED ───────── -->
+  <section class="section feat">
+    <div class="wrap">
+      <div class="sec-head row-head">
+        <div>
+          <p class="eyebrow" data-reveal>Featured grades</p>
+          <h2 class="h-l" data-split>Spec-sheet ready.</h2>
+        </div>
+        <a href="/products/" class="btn" data-reveal>All {products.length} products <span class="arr">→</span></a>
+      </div>
+      <div class="feat__grid" data-stagger>
+        {featured.map((p, i) => <ProductCard p={p} idx={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── PROCESS ───────── -->
+  <section class="section steps">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow" data-reveal>How we work</p>
+        <h2 class="h-l" data-split>A process partner, <span class="outline">not just a vendor.</span></h2>
+      </div>
+      <ol class="steps__list" data-stagger>
+        {steps.map((s) => (
+          <li><span class="mono amber">{s.n}</span><h3 class="h-m">{s.t}</h3><p>{s.d}</p></li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ───────── PLANT ───────── -->
+  <section class="section plant">
+    <div class="wrap split r">
+      <div class="plant__fig"><IsoPlant /></div>
+      <div>
+        <p class="eyebrow" data-reveal>Plants & lab</p>
+        <h2 class="h-l" data-split>9,500 m² of floor. 20 tonnes a day.</h2>
+        <p class="lede" data-reveal>Two production facilities in and around Pune, with a fully equipped R&D and test laboratory alongside. With that capacity we turn round your requirements quickly, and many QS 9000 customers take our material on a green-channel basis.</p>
+        <dl class="plant__dl" data-stagger>
+          <div><dt class="mono">Plant 01</dt><dd>3,000 m²</dd></div>
+          <div><dt class="mono">Plant 02</dt><dd>6,500 m²</dd></div>
+          <div><dt class="mono">Capacity</dt><dd>20 t / day</dd></div>
+          <div><dt class="mono">QMS</dt><dd>ISO 9001:2015</dd></div>
+        </dl>
+        <a href="/quality/" class="btn" data-reveal>Quality & lab <span class="arr">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── CLIENTS ───────── -->
+  <section class="clients">
+    <div class="wrap row-head">
+      <p class="eyebrow">Trusted by</p>
+      <a href="/clients/" class="btn ghost">Full client list →</a>
+    </div>
+    <div class="marquee" aria-label="Client logos">
+      <div class="marquee__track">
+        {[...logos, ...logos].map((c, i) => (
+          <img class="logo-ink" src={`/img/clients/${c.logo}.png`} alt={i < logos.length ? c.n : ''} width="150" height="80" loading="lazy" />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── TESTIMONIALS ───────── -->
+  <section class="section voices">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>In their words</p>
+      <blockquote class="voices__big">
+        <p class="h-m" data-split>“{testimonials[0].q}”</p>
+        <footer class="mono" data-reveal>{testimonials[0].n} · {testimonials[0].c}</footer>
+      </blockquote>
+      <div class="voices__grid" data-stagger>
+        {testimonials.slice(1, 4).map((t) => (
+          <figure class="voice">
+            <blockquote>“{t.q}”</blockquote>
+            <figcaption class="mono"><b>{t.n}</b><br />{t.c}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Enquiry />
+</Base>
+
+<style>
+  /* hero */
+  .hero { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; padding: 100px 0 40px; position: relative; overflow: hidden; }
+  .hero__in { display: grid; gap: 28px; align-items: center; grid-template-columns: 1fr; position: relative; z-index: 2; }
+  @media (min-width: 1000px) { .hero__in { grid-template-columns: 1fr 1.15fr; } }
+  .hero h1 { margin: 22px 0 26px; }
+  .hero__cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 34px; }
+  .hero__state { margin-top: 36px; display: flex; align-items: center; gap: 10px; color: var(--ink-3); flex-wrap: wrap; }
+  .hero__state b { color: var(--amber); font-weight: 500; min-width: 7ch; }
+  .hero__state .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 0 rgba(244,166,42,.6); animation: pulse 1.8s infinite; }
+  .hero__scroll { margin-left: auto; animation: bob 2s ease-in-out infinite; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(244,166,42,0); } 100% { box-shadow: 0 0 0 0 rgba(244,166,42,0); } }
+  @keyframes bob { 50% { transform: translateY(4px); } }
+  .hero__fig { position: relative; }
+  .hero__proof { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .hero__proof li { background: var(--panel); border: 1px solid var(--line-2); padding: 12px 14px; display: grid; gap: 2px; }
+  .hero__proof span { color: var(--ink-3); font-size: .64rem; text-transform: uppercase; letter-spacing: .12em; }
+  .hero__proof b { font-stretch: 112%; font-size: 1.05rem; }
+  .hero.is-cured .hero__proof li { border-left: 1px solid var(--amber); }
+  @media (min-width: 1000px) {
+    .hero__proof { position: absolute; right: -8px; top: 4%; width: 220px; grid-template-columns: 1fr; background: transparent; border: 0; gap: 10px; }
+    .hero__proof li { background: var(--panel); border: 1px solid var(--line-2); backdrop-filter: blur(4px); }
+  }
+
+  /* proof */
+  .proof { border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); padding: 56px 0; }
+  .proof__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 20px; }
+  @media (min-width: 860px) { .proof__grid { grid-template-columns: repeat(4, 1fr); } }
+  .proof__v { font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 900; font-stretch: 125%; line-height: 1; letter-spacing: -.03em; }
+  .proof__u { color: var(--amber); text-transform: uppercase; letter-spacing: .14em; margin-top: 6px; }
+  .proof__it p { color: var(--ink-3); margin: 4px 0 0; font-size: .9rem; }
+  .certs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 48px; }
+  @media (min-width: 860px) { .certs { grid-template-columns: repeat(4, 1fr); } }
+  .cert { display: grid; gap: 2px; padding: 16px; border: 1px solid var(--line-2); transition: border-color .3s, background .3s; }
+  .cert:hover { border-color: var(--amber); background: rgba(244,166,42,.04); }
+  .cert b { font-stretch: 115%; font-size: 1.15rem; }
+  .cert small { color: var(--ink-3); font-size: .78rem; line-height: 1.4; }
+
+  .sec-head { margin-bottom: clamp(40px, 6vw, 72px); display: grid; gap: 18px; max-width: 900px; }
+  .row-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; max-width: none; }
+
+  /* apps */
+  .apps__grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .apps__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .apps__grid { grid-template-columns: repeat(6, 1fr); } .app { grid-column: span 2; } .app:nth-child(4), .app:nth-child(5) { grid-column: span 3; } }
+  .app { position: relative; border: 1px solid var(--line-2); padding: 22px; display: flex; flex-direction: column; gap: 10px; transition: border-color .4s, background .4s; }
+  .app:hover { border-color: rgba(244,166,42,.6); background: rgba(244,166,42,.025); }
+  .app__n { color: var(--ink-3); font-size: .66rem; }
+  .app__fig { height: 200px; display: grid; place-items: center; padding: 10px 0; transition: transform .6s var(--ease); }
+  .app:hover .app__fig { transform: translateY(-6px) scale(1.03); }
+  .app__fig :global(svg) { max-height: 190px; width: auto; }
+  .app h3 { font-size: 1.5rem; font-stretch: 115%; }
+  .app p { color: var(--ink-2); margin: 0; flex: 1; font-size: .95rem; }
+  .app__c { color: var(--amber); }
+
+  /* featured */
+  .feat__grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+
+  /* steps */
+  .steps__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--line-2); }
+  @media (min-width: 860px) { .steps__list { grid-template-columns: repeat(4, 1fr); } }
+  .steps__list li { padding: 28px 24px 28px 0; border-bottom: 1px solid var(--line-2); display: grid; gap: 12px; align-content: start; position: relative; }
+  @media (min-width: 860px) { .steps__list li { border-bottom: 0; border-right: 1px solid var(--line-2); padding: 28px 24px; } .steps__list li:last-child { border-right: 0; } }
+  .steps__list p { color: var(--ink-2); margin: 0; }
+
+  /* plant */
+  .plant__dl { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 32px 0; border-top: 1px solid var(--line-2); }
+  .plant__dl div { padding: 16px 0; border-bottom: 1px solid var(--line-2); }
+  .plant__dl dt { color: var(--ink-3); text-transform: uppercase; letter-spacing: .12em; font-size: .66rem; }
+  .plant__dl dd { margin: 4px 0 0; font-size: 1.5rem; font-weight: 800; font-stretch: 118%; }
+  .plant .lede { margin: 22px 0 0; }
+
+  /* clients */
+  .clients { padding: 56px 0 72px; border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); }
+  .clients .row-head { margin-bottom: 28px; }
+  .marquee__track img { height: 64px; width: auto; }
+
+  /* voices */
+  .voices__big { margin: 28px 0 64px; max-width: 1050px; }
+  .voices__big p { font-weight: 600; font-stretch: 105%; line-height: 1.2; font-size: clamp(1.5rem, 3vw, 2.6rem); }
+  .voices__big footer { color: var(--amber); margin-top: 22px; }
+  .voices__grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 860px) { .voices__grid { grid-template-columns: repeat(3, 1fr); } }
+  .voice { margin: 0; padding: 24px; border: 1px solid var(--line-2); display: grid; gap: 18px; align-content: space-between; }
+  .voice blockquote { margin: 0; color: var(--ink-2); }
+  .voice figcaption { color: var(--ink-3); line-height: 1.5; }
+  .voice figcaption b { color: var(--ink); font-weight: 500; }
+</style>

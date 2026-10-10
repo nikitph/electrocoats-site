@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro';
+import Enquiry from '../components/Enquiry.astro';
+import { company } from '../data/site';
+---
+<Base title="Contact & enquiries" description="Contact Electrocoating & Insulation Technologies, Hinjawadi, Pune. Call +91 93709 03742, email mktg@electrocoats.com or WhatsApp the lab for samples and datasheets.">
+  <section class="phead">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">Home</a><span>/</span><span>Contact</span></div>
+      <p class="eyebrow">Contact</p>
+      <h1 class="h-xl" data-split>Talk to <span class="outline">the lab.</span></h1>
+    </div>
+  </section>
+  <section class="section ct">
+    <div class="wrap ct__grid" data-stagger>
+      <div class="ct__card ticks">
+        <span class="mono amber">{company.works.title}</span>
+        <address>{company.works.lines.map((l) => <span>{l}</span>)}</address>
+        <a class="btn" href={company.works.map} target="_blank" rel="noopener">Open in Maps ↗</a>
+      </div>
+      <div class="ct__card ticks">
+        <span class="mono amber">{company.correspondence.title}</span>
+        <address>{company.correspondence.lines.map((l) => <span>{l}</span>)}</address>
+        <a class="mono" href={`mailto:${company.correspondence.email}`}>{company.correspondence.email}</a>
+      </div>
+      <div class="ct__card ticks">
+        <span class="mono amber">Direct</span>
+        <ul>
+          {company.phones.map((p) => <li><a href={`tel:${p.tel}`}>{p.label}</a></li>)}
+          <li><a href={`mailto:${company.email}`}>{company.email}</a></li>
+        </ul>
+        <a class="btn solid" href={`https://wa.me/${company.whatsapp}`} target="_blank" rel="noopener">WhatsApp <span class="arr">→</span></a>
+      </div>
+    </div>
+  </section>
+  <Enquiry title="Request a sample, datasheet or quote." />
+</Base>
+<style>
+  .ct { padding-top: 64px; }
+  .ct__grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .ct__grid { grid-template-columns: repeat(3, 1fr); } }
+  .ct__card { border: 1px solid var(--line-2); padding: 28px; display: grid; gap: 18px; align-content: start; }
+  .ct__card address { font-style: normal; display: grid; font-size: 1.1rem; }
+  .ct__card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 1.15rem; font-weight: 600; }
+  .ct__card a:not(.btn):hover { color: var(--amber); }
+  .ct__card .btn { justify-self: start; }
+</style>
