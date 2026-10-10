@@ -66,7 +66,7 @@ const capIcons = [
   <!-- ───────── ABOUT ───────── -->
   <section class="section about">
     <div class="wrap split">
-      <div class="about__fig" data-reveal>
+      <div class="about__fig iso-panel" data-reveal>
         <img src="/img/site/about.jpg" alt="Electrocoats plant exterior and epoxy-coated factory floor" width="569" height="605" loading="lazy" />
         <span class="about__tag mono">EST. 2002 · PUNE</span>
       </div>
@@ -191,10 +191,12 @@ const capIcons = [
   .tm__tab.done .tm__bar i { transform: scaleX(1); background: rgba(255,255,255,.35); }
 
   /* about */
-  .about__fig { position: relative; overflow: hidden; clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px)); }
-  .about__fig img { width: 100%; height: auto; transition: transform 1.2s var(--ease); }
-  .about__fig:hover img { transform: scale(1.04); }
-  .about__tag { position: absolute; left: 16px; top: 16px; background: var(--navy); color: #fff; padding: 6px 10px; font-size: .68rem; }
+  .about__fig { align-self: start; }
+  .about__fig img { transition: transform 1.2s var(--ease);
+    /* exact outline of the two photos in about.jpg (569×605): drops the baked-in white */
+    clip-path: polygon(0 3.306%, 80.668% 3.306%, 80.668% 47.603%, 100% 47.603%, 100% 96.198%, 20.387% 96.198%, 20.387% 55.207%, 0 55.207%); }
+  .about__fig:hover img { transform: scale(1.02); }
+  .about__tag { position: absolute; left: calc(clamp(14px, 2.5vw, 28px) + 14px); top: calc(clamp(14px, 2.5vw, 28px) + 3.3% + 14px); background: var(--navy); color: #fff; padding: 6px 10px; font-size: .68rem; z-index: 2; }
   .about__txt { margin: 22px 0 26px; }
   .about__txt p { color: var(--ink-2); margin: 0 0 1em; max-width: 60ch; }
   .about__txt .big { color: var(--ink); font-size: clamp(1.1rem, 1.6vw, 1.35rem); line-height: 1.45; }

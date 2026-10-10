@@ -51,11 +51,14 @@ const lab = [
         <p class="eyebrow" data-reveal>R&D and test laboratory</p>
         <h2 class="h-l" data-split>Tested in house before it ships.</h2>
         <p class="lede" data-reveal>A modern, fully equipped R&D and testing laboratory with electrical, analytical and physical test instruments from reputed manufacturers worldwide. It handles batch release, customer trials and new-product development.</p>
+        <ol class="lab__list" data-stagger>
+          {lab.map((l, i) => <li><span class="mono">0{i + 1}</span><div><h3>{l.k}</h3><p>{l.d}</p></div></li>)}
+        </ol>
         <a href="/contact/#enquiry" class="btn" data-reveal>Request the equipment list <span class="arr">→</span></a>
       </div>
-      <ol class="lab__list" data-stagger>
-        {lab.map((l, i) => <li><span class="mono">0{i + 1}</span><div><h3>{l.k}</h3><p>{l.d}</p></div></li>)}
-      </ol>
+      <figure class="lab__fig iso-panel" data-reveal>
+        <img src="/img/site/lab.png" alt="Electrocoats R&amp;D and testing laboratory: instrument benches and analysis stations" width="569" height="605" loading="lazy" />
+      </figure>
     </div>
   </section>
 
@@ -74,7 +77,8 @@ const lab = [
   .q th a:hover { color: var(--accent); }
   .lab { border-top: 1px solid var(--line-2); }
   .lab .lede { margin: 22px 0 30px; }
-  .lab__list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line-2); }
+  .lab__list { list-style: none; padding: 0; margin: 0 0 28px; border-top: 1px solid var(--line-2); }
+  .lab__fig { margin: 0; align-self: start; }
   .lab__list li { display: grid; grid-template-columns: 50px 1fr; padding: 24px 0; border-bottom: 1px solid var(--line-2); }
   .lab__list .mono { color: var(--accent); }
   .lab__list h3 { font-size: 1.5rem; font-stretch: 115%; }
