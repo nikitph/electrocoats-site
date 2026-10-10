@@ -1,0 +1,38 @@
+---
+/**
+ * Breadcrumb trail. When `siblings` is given, the last crumb becomes a switcher
+ * listing the other pages at the same level, so one element covers both
+ * "where am I" and "where else can I go here".
+ */
+interface Link { label: string; href: string }
+interface Props { trail: Link[]; current: string; siblings?: Link[]; currentHref?: string }
+const { trail, current, siblings, currentHref } = Astro.props;
+---
+<nav class="crumbs" aria-label="Breadcrumb">
+  {trail.map((c) => <><a href={c.href}>{c.label}</a><span aria-hidden="true">/</span></>)}
+  {siblings?.length ? (
+    <details class="cs" data-crumb-switch>
+      <summary aria-current="page">{current}<svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" /></svg></summary>
+      <ul class="cs__menu">
+        {siblings.map((s) => (
+          <li><a href={s.href} class:list={{ on: s.href === currentHref }} aria-current={s.href === currentHref ? 'page' : undefined}>{s.label}</a></li>
+        ))}
+      </ul>
+    </details>
+  ) : (
+    <span aria-current="page">{current}</span>
+  )}
+</nav>
+<style>
+  .cs { position: relative; display: inline-block; }
+  .cs summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; color: var(--heading); padding: 4px 10px; margin: -4px -10px; border: 1px solid transparent; transition: border-color .25s, background .25s; }
+  .cs summary::-webkit-details-marker { display: none; }
+  .cs summary:hover, .cs[open] summary { border-color: var(--line-2); background: var(--panel); }
+  .cs svg { width: 9px; height: 6px; fill: none; stroke: currentColor; stroke-width: 1.5; transition: transform .3s var(--ease); }
+  .cs[open] svg { transform: rotate(180deg); }
+  .cs__menu { position: absolute; z-index: 40; top: calc(100% + 10px); left: -10px; min-width: 260px; list-style: none; margin: 0; padding: 6px; background: var(--bg); border: 1px solid var(--line-2); box-shadow: 0 30px 50px -30px rgba(20, 22, 50, .45); text-transform: none; letter-spacing: .04em; }
+  .cs__menu::before { content: ''; position: absolute; left: -1px; right: -1px; top: -1px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--green) 60%, transparent); }
+  .cs__menu a { display: block; padding: 10px 12px; color: var(--ink-2); transition: background .2s, color .2s; }
+  .cs__menu a:hover { background: var(--bg-2); color: var(--heading); }
+  .cs__menu a.on { color: var(--accent); }
+</style>

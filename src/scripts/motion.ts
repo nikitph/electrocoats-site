@@ -18,6 +18,7 @@ document.addEventListener('astro:before-swap', () => {
 export function boot() {
   ctx = gsap.context(() => {
     nav();
+    crumbSwitch();
     search();
     carousels();
     enquiry();
@@ -70,6 +71,16 @@ function nav() {
     if (dark) d.dataset.theme = 'dark'; else delete d.dataset.theme;
     try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch {}
   });
+}
+
+/* ───────────────── breadcrumb switchers: close on outside click / Escape */
+function crumbSwitch() {
+  const close = (except?: EventTarget | null) => $$<HTMLDetailsElement>('[data-crumb-switch][open]').forEach((d) => { if (!d.contains(except as Node)) d.open = false; });
+  const onClick = (e: MouseEvent) => close(e.target);
+  const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('click', onClick);
+  document.addEventListener('keydown', onKey);
+  cleanups.push(() => { document.removeEventListener('click', onClick); document.removeEventListener('keydown', onKey); });
 }
 
 /* ───────────────── split headings into masked words */
