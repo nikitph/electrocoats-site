@@ -309,7 +309,7 @@ function search() {
     sel = 0;
     res.innerHTML = hits.length
       ? hits.map((x, j) => `<li><a href="${x.h}" class="${j === 0 ? 'sel' : ''}"><b>${esc(x.t)}</b><span class="k">${x.k}</span>${x.s ? `<small>${esc(x.s)}</small>` : ''}</a></li>`).join('')
-      : `<li><a href="/contact/#enquiry"><b>No match. Ask the lab</b><span class="k">Enquiry</span><small>We formulate to order.</small></a></li>`;
+      : `<li><a href="${document.documentElement.dataset.base || '/'}contact/#enquiry"><b>No match. Ask the lab</b><span class="k">Enquiry</span><small>We formulate to order.</small></a></li>`;
   };
   const open = () => { render(); dlg.showModal(); q.focus(); if (!reduced()) gsap.fromTo(dlg, { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }); };
   $$('[data-search-open]').forEach((b) => (b.onclick = open));

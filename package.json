@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "prebuild": "node scripts/htaccess.mjs"
+    "prebuild": "node scripts/htaccess.mjs",
+    "build:preview": "PUBLIC_PREVIEW=1 astro build && node scripts/preview-postbuild.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
