@@ -102,18 +102,21 @@ export const capabilities = [
   'Electrical insulating powders',
 ];
 
+/** About section pages: one real page each, in menu order. Drives the menu, hub, sub-nav and breadcrumbs. */
+export const aboutPages = [
+  { label: 'Company Profile', href: '/about/company-profile/', d: 'Who we are, what we formulate, our vision and 20+ years of milestones.' },
+  { label: 'Our Leadership', href: '/about/leadership/', d: 'The people who run EITPL and how we work with customers.' },
+  { label: 'Achievement', href: '/about/achievements/', d: 'Awards, certificates and recognition from customers and government.' },
+  { label: 'Quality & Lab', href: '/about/quality/', d: 'ISO 9001:2015, UL file E255884, RoHS and our in-house test lab.' },
+  { label: 'CSR Projects', href: '/about/csr/', d: 'Our corporate social responsibility projects and policy.' },
+  { label: 'Annual Returns', href: '/about/annual-returns/', d: 'Statutory annual returns under the Companies Act, 2013.' },
+];
+
 /** Mirrors the original electrocoats.com menu so returning visitors find their way. */
 export type MenuItem = { label: string; href: string; children?: { label: string; href: string }[]; mega?: boolean };
 export const menu: MenuItem[] = [
   { label: 'Home', href: '/' },
-  { label: 'About', href: '/company/', children: [
-    { label: 'Company Profile', href: '/company/' },
-    { label: 'Our Leadership', href: '/company/#leadership' },
-    { label: 'Achievement', href: '/quality/#awards' },
-    { label: 'Quality & Lab', href: '/quality/' },
-    { label: 'CSR Projects', href: '/csr-policy/#projects' },
-    { label: 'Annual Returns', href: '/annual-returns/' },
-  ] },
+  { label: 'About', href: '/about/', children: aboutPages.map(({ label, href }) => ({ label, href })) },
   { label: 'Products', href: '/products/', mega: true },
   { label: 'Clients', href: '/clients/' },
   { label: 'Testimonial', href: '/testimonials/' },
@@ -124,7 +127,7 @@ export const menu: MenuItem[] = [
 export const heroSlides = [
   { title: 'Wire Enamels', sub: 'for primary insulation', img: '/img/slider/5.jpg', href: '/contact/#enquiry',
     d: 'Insulation for magnet wire and machine windings, backed by our polyesterimide and varnish chemistry.', chips: ['Primary insulation', 'Windings'] },
-  { title: 'Battery Application', sub: 'lead-acid & VRLA sealing', img: '/img/slider/4.jpg', href: '/products/?app=battery',
+  { title: 'Battery Application', sub: 'lead-acid & VRLA sealing', img: '/img/slider/4.jpg', href: '/products/batteries/',
     d: 'Lid-to-container and terminal sealing epoxies trusted by India’s largest battery makers.', chips: ['H₂SO₄ resistant', 'FR grades'] },
   { title: 'Epoxy & Polyurethane Resins', sub: 'potting & encapsulation', img: '/img/slider/2.jpg', href: '/products/?process=potting',
     d: 'Void-free potting and casting compounds for electronics, transformers and LED drivers.', chips: ['UL 94 V-0 · E255884', 'Class F 155 °C'] },

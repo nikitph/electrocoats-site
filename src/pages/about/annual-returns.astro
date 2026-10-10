@@ -1,0 +1,19 @@
+---
+import AboutPage from '../../layouts/AboutPage.astro';
+const returns = [
+  { fy: '2025–26', period: '01/04/2025 to 31/03/2026', form: 'MGT-7A (Abridged Annual Return)', href: '/docs/Annual-Return-MGT-7A-FY-2025-26.pdf' },
+];
+---
+<AboutPage title="Annual returns" description="Annual returns of Electrocoating & Insulation Technologies Pvt. Ltd. under section 92(3) of the Companies Act, 2013." eyebrow="Annual returns" lede="In accordance with section 92(3) of the Companies Act, 2013, read with rule 12 of the Companies (Management and Administration) Rules, 2014, the company's annual return is placed below.">
+  <Fragment slot="title">Annual <span class="outline">returns.</span></Fragment>
+
+  <section class="section">
+    <div class="wrap">
+      <table class="spec">
+        <thead><tr><th>Financial year</th><th>Form</th><th>Document</th></tr></thead>
+        <tbody>{returns.map((r) => <tr><td>{r.fy}<br /><small class="mono">{r.period}</small></td><td>{r.form}</td><td><a class="btn" href={r.href} target="_blank" rel="noopener">PDF ↓</a></td></tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+</AboutPage>
+<style>small { color: var(--ink-3); } td { vertical-align: middle !important; }</style>

@@ -1,0 +1,45 @@
+---
+/** Application category page, e.g. /products/batteries/. Rendered by products/[slug].astro. */
+import Base from '../layouts/Base.astro';
+import ProductFinder from './ProductFinder.astro';
+import IsoApp from './iso/IsoApp.astro';
+import Enquiry from './Enquiry.astro';
+import { products, APPLICATIONS, appHref, type App } from '../data/products';
+
+interface Props { app: App }
+const { app } = Astro.props;
+const a = APPLICATIONS[app];
+const count = products.filter((p) => p.apps.includes(app)).length;
+---
+<Base title={`${a.label} resins & compounds`} description={`${a.d} ${count} grades from Electrocoats, Pune.`}>
+  <section class="phead cv">
+    <div class="wrap cv__in">
+      <div>
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/products/">Products</a><span>/</span><span aria-current="page">{a.label}</span></nav>
+        <p class="eyebrow">{count} grades</p>
+        <h1 class="h-xl" data-split>{a.label}</h1>
+        <p class="lede">{a.d}</p>
+      </div>
+      <div class="cv__fig"><IsoApp kind={app} /></div>
+    </div>
+  </section>
+
+  <nav class="subnav" aria-label="Product categories">
+    <div class="wrap subnav__in">
+      <a href="/products/" class="subnav__a">All products</a>
+      {(Object.keys(APPLICATIONS) as App[]).map((k) => (
+        <a href={appHref(k)} class:list={['subnav__a', { on: k === app }]} aria-current={k === app ? 'page' : undefined}>{APPLICATIONS[k].label}</a>
+      ))}
+    </div>
+  </nav>
+
+  <ProductFinder app={app} />
+  <Enquiry title={`Need a ${a.label.toLowerCase()} grade we don’t list?`} />
+</Base>
+<style>
+  .phead.cv { border-bottom: 0; padding-bottom: clamp(32px, 4vw, 56px); }
+  .cv__in { display: grid; gap: 32px; align-items: center; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .cv__in { grid-template-columns: 1.4fr .6fr; } }
+  .cv__fig { max-width: 300px; justify-self: center; width: 100%; }
+  .cv__fig :global(svg) { max-height: 240px; }
+</style>

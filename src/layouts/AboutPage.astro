@@ -1,0 +1,58 @@
+---
+/**
+ * Shell for every page under About: breadcrumbs, header and a sticky sub-nav of
+ * sibling pages, so visitors always know where they are in the section.
+ */
+import Base from './Base.astro';
+import { aboutPages } from '../data/site';
+
+interface Props { title: string; description: string; eyebrow?: string; lede?: string }
+const { title, description, eyebrow = 'About EITPL', lede } = Astro.props;
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const current = aboutPages.find((p) => p.href === path);
+const idx = current ? aboutPages.indexOf(current) : -1;
+const prev = idx > 0 ? aboutPages[idx - 1] : null;
+const next = idx >= 0 && idx < aboutPages.length - 1 ? aboutPages[idx + 1] : null;
+---
+<Base title={title} description={description}>
+  <section class="phead">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a><span>/</span>
+        {current ? <a href="/about/">About</a> : <span>About</span>}
+        {current && <><span>/</span><span aria-current="page">{current.label}</span></>}
+      </nav>
+      <p class="eyebrow">{eyebrow}</p>
+      <h1 class="h-xl" data-split><slot name="title" /></h1>
+      {lede && <p class="lede">{lede}</p>}
+    </div>
+  </section>
+
+  <nav class="subnav" aria-label="About section">
+    <div class="wrap subnav__in">
+      <a href="/about/" class:list={['subnav__a', { on: !current }]} aria-current={!current ? 'page' : undefined}>Overview</a>
+      {aboutPages.map((p) => (
+        <a href={p.href} class:list={['subnav__a', { on: p.href === path }]} aria-current={p.href === path ? 'page' : undefined}>{p.label}</a>
+      ))}
+    </div>
+  </nav>
+
+  <slot />
+
+  {current && (
+    <nav class="pager wrap" aria-label="More in About">
+      {prev ? <a href={prev.href} class="pager__a"><span class="mono">← Previous</span><b>{prev.label}</b></a> : <a href="/about/" class="pager__a"><span class="mono">← Back to</span><b>About overview</b></a>}
+      {next ? <a href={next.href} class="pager__a r"><span class="mono">Next →</span><b>{next.label}</b></a> : <span></span>}
+    </nav>
+  )}
+</Base>
+
+<style>
+  .phead { border-bottom: 0; padding-bottom: clamp(32px, 4vw, 56px); }
+  .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding-top: 24px; padding-bottom: 72px; }
+  .pager__a { display: grid; gap: 6px; padding: 22px; border: 1px solid var(--line-2); background: var(--panel); transition: border-color .3s, transform .4s var(--ease); }
+  .pager__a:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .pager__a .mono { color: var(--accent); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; }
+  .pager__a b { font-size: 1.25rem; font-stretch: 112%; }
+  .pager__a.r { text-align: right; }
+</style>

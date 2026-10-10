@@ -1,141 +1,21 @@
 ---
-import Base from '../../layouts/Base.astro';
-import IsoPack from '../../components/iso/IsoPack.astro';
-import IsoApp from '../../components/iso/IsoApp.astro';
-import ProductCard from '../../components/ProductCard.astro';
-import Enquiry from '../../components/Enquiry.astro';
-import { products, related, APPLICATIONS, PROCESSES, CHEMISTRIES, ATTRIBUTES, type Product } from '../../data/products';
-import { company } from '../../data/site';
+/**
+ * /products/<slug>/ serves two kinds of page:
+ *  - application categories (e.g. /products/batteries/), filtered finder
+ *  - individual products (e.g. /products/epofil-60/)
+ * Category slugs and product slugs never overlap.
+ */
+import ProductView from '../../components/ProductView.astro';
+import CategoryView from '../../components/CategoryView.astro';
+import { products, APPLICATIONS, type App, type Product } from '../../data/products';
 
 export function getStaticPaths() {
-  return products.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+  const cats = (Object.keys(APPLICATIONS) as App[]).map((app) => ({ params: { slug: APPLICATIONS[app].slug }, props: { app } }));
+  const items = products.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+  const clash = cats.find((c) => products.some((p) => p.slug === c.params.slug));
+  if (clash) throw new Error(`Category slug collides with a product: ${clash.params.slug}`);
+  return [...cats, ...items];
 }
-const { p } = Astro.props as { p: Product };
-const chem = CHEMISTRIES[p.chemistry];
-const rel = related(p);
-const jsonld = {
-  '@context': 'https://schema.org', '@type': 'Product', name: p.name, description: p.summary,
-  category: p.apps.map((a) => APPLICATIONS[a].label).join(', '),
-  brand: { '@type': 'Brand', name: company.short },
-  manufacturer: { '@type': 'Organization', name: company.name },
-};
+const { app, p } = Astro.props as { app?: App; p?: Product };
 ---
-<Base title={`${p.name}: ${chem.label} ${PROCESSES[p.process[0]].toLowerCase()}`} description={p.summary} jsonld={jsonld}>
-  <section class="phead pd">
-    <div class="wrap pd__in">
-      <div>
-        <div class="crumbs"><a href="/">Home</a><span>/</span><a href="/products/">Products</a><span>/</span><a href={`/products/?app=${p.apps[0]}`}>{APPLICATIONS[p.apps[0]].label}</a></div>
-        <p class="eyebrow">{chem.label} · {p.process.map((x) => PROCESSES[x]).join(' · ')}</p>
-        <h1 class="h-xl" data-split>{p.name}</h1>
-        <p class="lede">{p.summary}</p>
-        <div class="pd__chips">
-          {p.attrs.map((a) => <span class={`chip ${a === 'ul' ? 'ul' : ''}`}>{ATTRIBUTES[a]}</span>)}
-          {p.apps.map((a) => <a class="chip" href={`/products/?app=${a}`}>{APPLICATIONS[a].label}</a>)}
-        </div>
-        <div class="pd__cta">
-          <a class="btn solid" href="#enquiry" data-need="Sample">Request a sample <span class="arr">→</span></a>
-          <a class="btn" href="#enquiry" data-need="Datasheet">Get the datasheet (PDF)</a>
-        </div>
-      </div>
-      <div class="pd__fig" data-tilt>
-        <IsoPack pack={p.pack} code={chem.code} class="pd__pack" />
-        <span class="mono pd__tag">{chem.code}-{p.slug.toUpperCase().replace(/[^A-Z0-9]+/g, '').slice(0, 8)}</span>
-      </div>
-    </div>
-  </section>
-
-  {p.stub ? (
-    <section class="section">
-      <div class="wrap narrow">
-        <p class="eyebrow">Technical data</p>
-        <h2 class="h-l" data-split>Datasheet on request.</h2>
-        <p class="lede">We are updating the published data for {p.name}. The lab can send the current technical datasheet, a recommendation for your process and a sample.</p>
-      </div>
-    </section>
-  ) : (
-    <section class="section pd__body">
-      <div class="wrap pd__grid">
-        <div class="pd__main">
-          {p.intro && (
-            <div class="pd__intro" data-reveal>{p.intro.map((t) => <p>{t}</p>)}</div>
-          )}
-          {p.features && (
-            <div class="block">
-              <h2 class="mono blk-h">Properties of the cured system</h2>
-              <ul class="ticks-list" data-stagger>{p.features.map((f) => <li>{f}</li>)}</ul>
-            </div>
-          )}
-          {p.uses && (
-            <div class="block">
-              <h2 class="mono blk-h">Field of application</h2>
-              <ul class="ticks-list" data-stagger>{p.uses.map((f) => <li>{f}</li>)}</ul>
-            </div>
-          )}
-          {p.variants && (
-            <div class="block">
-              <h2 class="mono blk-h">Available as</h2>
-              <div class="pd__chips">{p.variants.map((v) => <span class="chip">{v}</span>)}</div>
-            </div>
-          )}
-        </div>
-        <aside class="pd__side">
-          <div class="sheet ticks" data-reveal>
-            <div class="sheet__h mono"><span>SPEC</span><span>{p.name.toUpperCase()}</span></div>
-            {p.specs && (
-              <table class="spec">
-                <tbody>{p.specs.map(([k, v]) => <tr><th>{k}</th><td>{v}</td></tr>)}</tbody>
-              </table>
-            )}
-            <p class="mono sheet__note">Mix ratio, pot life and full cure schedule are on the technical datasheet.</p>
-            <a class="btn solid" href="#enquiry" data-need="Datasheet">Request datasheet <span class="arr">→</span></a>
-          </div>
-          <div class="pd__app" data-reveal>
-            <IsoApp kind={p.apps[0]} />
-          </div>
-        </aside>
-      </div>
-    </section>
-  )}
-
-  {rel.length > 0 && (
-    <section class="section rel">
-      <div class="wrap">
-        <p class="eyebrow">Related grades</p>
-        <h2 class="h-l" data-split>Also consider</h2>
-        <div class="rel__grid" data-stagger>{rel.map((r, i) => <ProductCard p={r} idx={i} />)}</div>
-      </div>
-    </section>
-  )}
-
-  <Enquiry product={p.slug} title={`Sample ${p.name} on your line.`} />
-</Base>
-<style>
-  .pd__in { display: grid; gap: 40px; align-items: center; grid-template-columns: 1fr; }
-  @media (min-width: 900px) { .pd__in { grid-template-columns: 1.3fr .7fr; } }
-  .pd__chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 22px; }
-  .pd__chips a.chip:hover { border-color: var(--accent); color: var(--accent); }
-  .pd__cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
-  .pd__fig { position: relative; max-width: 340px; width: 100%; justify-self: center; aspect-ratio: 1; display: grid; place-items: center; border: 1px solid var(--line-2); background: radial-gradient(circle at 50% 60%, rgba(214, 46, 59,.08), transparent 60%); }
-  .pd__fig::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(30deg, var(--line-3) 0 1px, transparent 1px 22px), repeating-linear-gradient(150deg, var(--line-3) 0 1px, transparent 1px 22px); }
-  .pd__fig :global(.pd__pack) { width: 66%; position: relative; }
-  .pd__fig:hover :global(.lid) { transform: translateY(-18px); }
-  .pd__fig:hover :global(.liq) { opacity: 1 !important; }
-  .pd__tag { position: absolute; left: 14px; bottom: 12px; color: var(--ink-3); font-size: .66rem; }
-  .narrow { max-width: 860px; }
-  .pd__grid { display: grid; gap: 56px; grid-template-columns: 1fr; }
-  @media (min-width: 1000px) { .pd__grid { grid-template-columns: 1.2fr .8fr; } .pd__side { position: sticky; top: 100px; align-self: start; } }
-  .pd__intro p { font-size: 1.15rem; color: var(--ink-2); margin: 0 0 1em; max-width: 64ch; }
-  .pd__intro p:first-child { font-size: clamp(1.25rem, 2vw, 1.6rem); color: var(--ink); line-height: 1.4; }
-  .block { margin-top: 48px; }
-  .blk-h { color: var(--accent); font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 400; margin-bottom: 14px; }
-  .ticks-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line-2); }
-  .ticks-list li { padding: 14px 0 14px 28px; border-bottom: 1px solid var(--line-2); position: relative; }
-  .ticks-list li::before { content: ''; position: absolute; left: 4px; top: 50%; width: 10px; height: 6px; border-left: 1px solid var(--accent); border-bottom: 1px solid var(--accent); transform: translateY(-70%) rotate(-45deg); }
-  .sheet { border: 1px solid var(--line-2); padding: 24px; background: var(--panel); display: grid; gap: 18px; }
-  .sheet__h { display: flex; justify-content: space-between; color: var(--ink-3); font-size: .66rem; letter-spacing: .14em; border-bottom: 1px solid var(--line); padding-bottom: 12px; gap: 12px; }
-  .sheet__note { color: var(--ink-3); margin: 0; font-size: .72rem; }
-  .pd__app { margin-top: 28px; padding: 24px; border: 1px dashed var(--line-2); }
-  .rel { border-top: 1px solid var(--line-2); }
-  .rel h2 { margin: 16px 0 40px; }
-  .rel__grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
-</style>
+{app ? <CategoryView app={app} /> : <ProductView p={p!} />}

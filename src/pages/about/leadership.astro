@@ -1,0 +1,53 @@
+---
+import AboutPage from '../../layouts/AboutPage.astro';
+import { company, testimonials } from '../../data/site';
+const voices = testimonials.filter((t) => /R&D|technical team/i.test(t.q));
+const principles = [
+  { t: 'Professionals at every level', d: 'People with in-depth process knowledge run each stage, from formulation to dispatch.' },
+  { t: 'Close to the customer', d: 'High sensitivity to customer requirements, and a technical team available for service and trials.' },
+  { t: 'Growing our people', d: 'Skills development and human-resource growth rank alongside quality as a priority.' },
+];
+---
+<AboutPage title="Our leadership" description={`Electrocoating & Insulation Technologies is led by Managing Director ${company.md}, with experienced professionals at every level of the business.`} eyebrow="Our leadership" lede="Electrocoats is run by a team of experienced, energetic professionals under the leadership of our Managing Director.">
+  <Fragment slot="title">Led by <span class="outline">practitioners.</span></Fragment>
+
+  <section class="section">
+    <div class="wrap split">
+      <div class="md ticks" data-reveal>
+        <span class="mono accent">Managing Director</span>
+        <h2 class="h-l">{company.md}</h2>
+        <a class="mono md__mail" href={`mailto:${company.correspondence.email}`}>{company.correspondence.email}</a>
+      </div>
+      <ol class="pr" data-stagger>
+        {principles.map((p) => <li><h3>{p.t}</h3><p>{p.d}</p></li>)}
+      </ol>
+    </div>
+  </section>
+
+  {voices.length > 0 && (
+    <section class="section voices">
+      <div class="wrap">
+        <p class="eyebrow" data-reveal>What customers say about the team</p>
+        <div class="vg" data-stagger>
+          {voices.map((t) => (
+            <figure><blockquote>“{t.q}”</blockquote><figcaption class="mono">{t.n} · {t.c}</figcaption></figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</AboutPage>
+<style>
+  .md { border: 1px solid var(--line-2); background: var(--panel); padding: clamp(28px, 4vw, 48px); display: grid; gap: 16px; align-content: start; }
+  .md__mail { color: var(--ink-2); }
+  .md__mail:hover { color: var(--accent); }
+  .pr { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-2); counter-reset: pr; }
+  .pr li { padding: 22px 0; border-bottom: 1px solid var(--line-2); }
+  .pr h3 { font-size: 1.35rem; font-stretch: 112%; }
+  .pr p { margin: 6px 0 0; color: var(--ink-2); }
+  .voices { border-top: 1px solid var(--line-2); }
+  .vg { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-top: 24px; }
+  .vg figure { margin: 0; padding: 26px; border: 1px solid var(--line-2); display: grid; gap: 16px; }
+  .vg blockquote { margin: 0; font-size: 1.15rem; color: var(--ink); }
+  .vg figcaption { color: var(--ink-3); }
+</style>

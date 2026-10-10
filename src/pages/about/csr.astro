@@ -1,0 +1,27 @@
+---
+import AboutPage from '../../layouts/AboutPage.astro';
+import Legal from '../../components/Legal.astro';
+import policy from '../../data/csr-policy.json';
+import projects from '../../data/csr-projects.json';
+---
+<AboutPage title="CSR projects & policy" description="CSR projects and corporate social responsibility policy of Electrocoating & Insulation Technologies Pvt. Ltd., under section 135 and Schedule VII of the Companies Act, 2013." eyebrow="CSR projects" lede="The areas we invest in under Schedule VII of the Companies Act, 2013, and the policy that governs them.">
+  <Fragment slot="title">Corporate social <span class="outline">responsibility.</span></Fragment>
+
+  <section class="section">
+    <div class="wrap csr">
+      <div>
+        <h2 class="h-m">CSR projects</h2>
+        <Legal blocks={projects as any} />
+      </div>
+      <div class="csr__policy">
+        <h2 class="h-m">CSR policy</h2>
+        <Legal blocks={policy as any} />
+      </div>
+    </div>
+  </section>
+</AboutPage>
+<style>
+  .csr { display: grid; gap: 72px; }
+  .csr h2 { margin-bottom: 8px; }
+  .csr__policy { padding-top: 48px; border-top: 1px solid var(--line-2); }
+</style>

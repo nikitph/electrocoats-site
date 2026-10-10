@@ -8,12 +8,15 @@
  */
 
 export const APPLICATIONS = {
-  electrical: { label: 'Electrical & Electronics', short: 'E&E' },
-  battery: { label: 'Batteries', short: 'BAT' },
-  civil: { label: 'Civil Engineering', short: 'CIV' },
-  tooling: { label: 'Modelling & Tooling', short: 'TLG' },
-  general: { label: 'General Purpose', short: 'GP' },
+  electrical: { label: 'Electrical & Electronics', short: 'E&E', slug: 'electrical-electronics', d: 'Potting, casting, coating and impregnation compounds for transformers, LED drivers, PCBs, motors and switchgear.' },
+  battery: { label: 'Batteries', short: 'BAT', slug: 'batteries', d: 'Lid-to-container and terminal sealing epoxies for lead-acid and VRLA batteries.' },
+  civil: { label: 'Civil Engineering', short: 'CIV', slug: 'civil-engineering', d: 'Water-thinnable epoxies and protective coatings for tanks, terraces, floors and stone.' },
+  tooling: { label: 'Modelling & Tooling', short: 'TLG', slug: 'modelling-tooling', d: 'Boards, pastes, gelcoats and PU systems for patterns, fixtures and moulds.' },
+  general: { label: 'General Purpose', short: 'GP', slug: 'general-purpose', d: 'Adhesives, putties, diluents and pigment pastes for the workshop.' },
 } as const;
+
+/** URL of an application's category page. */
+export const appHref = (k: keyof typeof APPLICATIONS) => `/products/${APPLICATIONS[k].slug}/`;
 
 export const PROCESSES = {
   potting: 'Potting & encapsulation',

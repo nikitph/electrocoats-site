@@ -1,6 +1,6 @@
 ---
 import { company, menu } from '../data/site';
-import { APPLICATIONS } from '../data/products';
+import { APPLICATIONS, appHref, type App } from '../data/products';
 const year = new Date().getFullYear();
 ---
 <footer class="ft">
@@ -15,7 +15,7 @@ const year = new Date().getFullYear();
       </div>
       <div>
         <p class="eyebrow">Products</p>
-        <ul>{Object.entries(APPLICATIONS).map(([k, v]) => <li><a href={`/products/?app=${k}`}>{v.label}</a></li>)}</ul>
+        <ul>{Object.entries(APPLICATIONS).map(([k, v]) => <li><a href={appHref(k as App)}>{v.label}</a></li>)}</ul>
       </div>
       <div>
         <p class="eyebrow">Company</p>

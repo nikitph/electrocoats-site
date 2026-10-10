@@ -1,0 +1,42 @@
+---
+import AboutPage from '../../layouts/AboutPage.astro';
+import { aboutPages, proof } from '../../data/site';
+---
+<AboutPage title="About Electrocoats" description="About Electrocoating & Insulation Technologies Pvt. Ltd.: company profile, leadership, achievements, quality and lab, CSR projects and annual returns." lede="An ISO 9001:2015 certified manufacturer of epoxy, polyurethane, phenolic and silicone resin formulations for electrical insulation, based in Pune.">
+  <Fragment slot="title">About <span class="outline">EITPL.</span></Fragment>
+
+  <section class="section hub">
+    <div class="wrap">
+      <div class="facts" data-stagger>
+        {proof.map((p) => (
+          <div><b><span data-count={p.value}>{p.value}</span><span class="accent">{p.suffix}</span></b><span class="mono">{p.unit}</span></div>
+        ))}
+      </div>
+      <div class="cards" data-stagger>
+        {aboutPages.map((p, i) => (
+          <a href={p.href} class="card ticks">
+            <span class="mono accent">0{i + 1}</span>
+            <h2>{p.label}</h2>
+            <p>{p.d}</p>
+            <span class="go" aria-hidden="true">→</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</AboutPage>
+<style>
+  .hub { padding-top: clamp(48px, 6vw, 80px); }
+  .facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 56px; }
+  @media (min-width: 860px) { .facts { grid-template-columns: repeat(4, 1fr); } }
+  .facts div { display: grid; gap: 4px; padding-top: 16px; border-top: 1px solid var(--line-2); }
+  .facts b { font-size: clamp(2.2rem, 4vw, 3.4rem); font-weight: 900; font-stretch: 122%; line-height: 1; color: var(--heading); }
+  .facts .mono { color: var(--ink-3); text-transform: uppercase; letter-spacing: .12em; font-size: .7rem; }
+  .cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .card { position: relative; display: grid; gap: 10px; align-content: start; padding: 28px; border: 1px solid var(--line-2); background: var(--panel); min-height: 200px; transition: border-color .3s, transform .4s var(--ease); }
+  .card:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .card h2 { font-size: 1.6rem; font-stretch: 114%; }
+  .card p { margin: 0; color: var(--ink-2); }
+  .go { position: absolute; right: 24px; bottom: 22px; color: var(--accent); transition: transform .4s var(--ease); }
+  .card:hover .go { transform: translateX(5px); }
+</style>

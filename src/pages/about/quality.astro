@@ -1,8 +1,7 @@
 ---
-import Base from '../layouts/Base.astro';
-import Enquiry from '../components/Enquiry.astro';
-import { company, awards } from '../data/site';
-import { products } from '../data/products';
+import AboutPage from '../../layouts/AboutPage.astro';
+import { company } from '../../data/site';
+import { products } from '../../data/products';
 const ulGrades = products.filter((p) => p.attrs.includes('ul'));
 const rohs = products.filter((p) => p.attrs.includes('rohs'));
 const lab = [
@@ -11,15 +10,8 @@ const lab = [
   { k: 'Physical', d: 'Physical property testing against the product specification.' },
 ];
 ---
-<Base title="Quality, certifications & test lab" description={`ISO 9001:2015 (Reg. ${company.iso.reg}), UL file ${company.ul} with UL 94 V-0 listed potting compounds, RoHS compliant range and an in-house R&D and testing laboratory.`}>
-  <section class="phead">
-    <div class="wrap">
-      <div class="crumbs"><a href="/">Home</a><span>/</span><span>Quality</span></div>
-      <p class="eyebrow">Quality & compliance</p>
-      <h1 class="h-xl" data-split>Proof, <span class="outline">on file.</span></h1>
-      <p class="lede">Certified quality management, independently listed flammability ratings and a lab that tests what leaves the plant. The detail is below.</p>
-    </div>
-  </section>
+<AboutPage title="Quality, certifications & test lab" description={`ISO 9001:2015 (Reg. ${company.iso.reg}), UL file ${company.ul} with UL 94 V-0 listed potting compounds, RoHS compliant range and an in-house R&D and testing laboratory.`} eyebrow="Quality & compliance" lede="Certified quality management, independently listed flammability ratings and a lab that tests what leaves the plant.">
+  <Fragment slot="title">Proof, <span class="outline">on file.</span></Fragment>
 
   <section class="section">
     <div class="wrap qgrid" data-stagger>
@@ -67,24 +59,12 @@ const lab = [
     </div>
   </section>
 
-  <section class="section awards" id="awards">
+  <section class="section more">
     <div class="wrap">
-      <p class="eyebrow" data-reveal>Recognition</p>
-      <h2 class="h-l" data-split>Awards & certificates</h2>
-      <div class="aw" data-stagger>
-        {awards.map((a) => (
-          <a class="aw__it" href={`/img/awards/${a.img}`} data-lightbox data-caption={`${a.t} · ${a.y}`}>
-            <div class="aw__img"><img src={`/img/awards/${a.img}`} alt={a.t} loading="lazy" /></div>
-            <span class="mono accent">{a.y}</span>
-            <h3>{a.t}</h3>
-            <p>{a.d}</p>
-          </a>
-        ))}
-      </div>
+      <a href="/about/achievements/" class="btn">See awards &amp; certificates <span class="arr">→</span></a>
     </div>
   </section>
-  <Enquiry />
-</Base>
+</AboutPage>
 <style>
   .qgrid { display: grid; gap: 14px; grid-template-columns: 1fr; }
   @media (min-width: 860px) { .qgrid { grid-template-columns: 1fr 1fr; } }
@@ -99,13 +79,5 @@ const lab = [
   .lab__list .mono { color: var(--accent); }
   .lab__list h3 { font-size: 1.5rem; font-stretch: 115%; }
   .lab__list p { margin: 6px 0 0; color: var(--ink-2); }
-  .awards { border-top: 1px solid var(--line-2); }
-  .awards h2 { margin: 16px 0 48px; }
-  .aw { display: grid; gap: 28px 16px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-  .aw__it { display: grid; gap: 8px; align-content: start; }
-  .aw__img { aspect-ratio: 4/3; overflow: hidden; border: 1px solid var(--line-2); background: var(--bg-2); }
-  .aw__img img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
-  .aw__it:hover img { transform: scale(1.05); }
-  .aw__it h3 { font-size: 1.05rem; font-stretch: 108%; font-weight: 700; line-height: 1.2; }
-  .aw__it p { margin: 0; color: var(--ink-3); font-size: .85rem; }
+  .more { padding-top: 0; }
 </style>

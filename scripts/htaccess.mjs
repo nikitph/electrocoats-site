@@ -3,9 +3,9 @@ import { writeFileSync } from 'node:fs';
 import { products } from '../src/data/products.ts';
 
 const pages = {
-  'index.html': '/', 'about.html': '/company/', 'team.html': '/company/', 'achievement.html': '/quality/',
+  'index.html': '/', 'about.html': '/about/company-profile/', 'team.html': '/about/leadership/', 'achievement.html': '/about/achievements/',
   'client.html': '/clients/', 'testimonial.html': '/testimonials/', 'contact.html': '/contact/',
-  'csr_policy.html': '/csr-policy/', 'csr_projects.html': '/csr-policy/', 'returns.html': '/annual-returns/',
+  'csr_policy.html': '/about/csr/', 'csr_projects.html': '/about/csr/', 'returns.html': '/about/annual-returns/',
 };
 for (const p of products) for (const old of p.legacy) pages[old] = `/products/${p.slug}/`;
 

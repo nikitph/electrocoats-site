@@ -247,3 +247,15 @@ dialog.lb p { color: var(--ink-2); margin: 12px 0 0; }
 .phead .crumbs { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); letter-spacing: .08em; margin-bottom: 28px; display: flex; gap: 10px; flex-wrap: wrap; }
 .phead .crumbs a:hover { color: var(--accent); }
 .phead h1 { margin: 18px 0 22px; }
+
+/* ───── section sub-nav (About pages, product categories) */
+.subnav { position: sticky; top: 0; z-index: 30; background: var(--nav-bg); backdrop-filter: blur(14px); border-block: 1px solid var(--line-2); transition: top .5s var(--ease); }
+.nav:not(.hide) ~ main .subnav { top: 84px; }
+@media (max-width: 520px) { .nav:not(.hide) ~ main .subnav { top: 72px; } }
+.subnav__in { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.subnav__in::-webkit-scrollbar { display: none; }
+.subnav__a { position: relative; flex: none; padding: 16px 14px; font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); transition: color .25s; }
+.subnav__a::after { content: ''; position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .4s var(--ease); }
+.subnav__a:hover { color: var(--ink); }
+.subnav__a.on { color: var(--heading); }
+.subnav__a.on::after { transform: scaleX(1); }

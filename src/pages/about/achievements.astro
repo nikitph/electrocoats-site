@@ -1,0 +1,32 @@
+---
+import AboutPage from '../../layouts/AboutPage.astro';
+import { awards } from '../../data/site';
+---
+<AboutPage title="Achievements: awards & certificates" description="Awards and certificates earned by Electrocoating & Insulation Technologies: Exide excellence awards, CBIC appreciation, NSIC–CRISIL rating, ISO 9001:2015 and more." eyebrow="Achievement" lede="Recognition from the customers we supply, from government, and from the industry bodies we belong to.">
+  <Fragment slot="title">Earned, <span class="outline">not claimed.</span></Fragment>
+
+  <section class="section aw-sec">
+    <div class="wrap">
+      <div class="aw" data-stagger>
+        {awards.map((a) => (
+          <a class="aw__it" href={`/img/awards/${a.img}`} data-lightbox data-caption={`${a.t} · ${a.y}`}>
+            <div class="aw__img"><img src={`/img/awards/${a.img}`} alt={a.t} loading="lazy" /></div>
+            <span class="mono accent">{a.y}</span>
+            <h2>{a.t}</h2>
+            <p>{a.d}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</AboutPage>
+<style>
+  .aw-sec { padding-top: clamp(48px, 6vw, 80px); }
+  .aw { display: grid; gap: 28px 16px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .aw__it { display: grid; gap: 8px; align-content: start; }
+  .aw__img { aspect-ratio: 4/3; overflow: hidden; border: 1px solid var(--line-2); background: var(--bg-2); }
+  .aw__img img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
+  .aw__it:hover img { transform: scale(1.05); }
+  .aw__it h2 { font-size: 1.05rem; font-stretch: 108%; font-weight: 700; line-height: 1.2; }
+  .aw__it p { margin: 0; color: var(--ink-3); font-size: .85rem; }
+</style>

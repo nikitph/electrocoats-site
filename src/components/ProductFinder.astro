@@ -1,0 +1,74 @@
+---
+/**
+ * Filterable product grid. Used by /products/ (everything) and by each
+ * application category page, where `app` locks the application filter.
+ */
+import ProductCard from './ProductCard.astro';
+import { products as all, APPLICATIONS, PROCESSES, CHEMISTRIES, ATTRIBUTES, type App } from '../data/products';
+
+interface Props { app?: App }
+const { app } = Astro.props;
+const products = app ? all.filter((p) => p.apps.includes(app)) : all;
+const used = (keys: string[], pick: (p: (typeof products)[number]) => string[]) => keys.filter((k) => products.some((p) => pick(p).includes(k)));
+const groups = [
+  ...(app ? [] : [{ f: 'app', label: 'Application', items: Object.entries(APPLICATIONS).map(([k, v]) => [k, v.label]) }]),
+  { f: 'process', label: 'Process', items: used(Object.keys(PROCESSES), (p) => p.process).map((k) => [k, PROCESSES[k as keyof typeof PROCESSES]]) },
+  { f: 'chem', label: 'Chemistry', items: used(Object.keys(CHEMISTRIES), (p) => [p.chemistry]).map((k) => [k, CHEMISTRIES[k as keyof typeof CHEMISTRIES].label]) },
+  { f: 'attr', label: 'Must have', items: used(Object.keys(ATTRIBUTES), (p) => p.attrs).map((k) => [k, ATTRIBUTES[k as keyof typeof ATTRIBUTES]]) },
+].filter((g) => g.items.length);
+const sorted = [...products].sort((a, b) => Number(!!a.stub) - Number(!!b.stub));
+---
+  <section class="finder" data-finder>
+    <div class="wrap finder__in">
+      <aside class="filters" aria-label="Filters" data-filters>
+        <button type="button" class="ftoggle mono" data-ftoggle aria-expanded="false">Filters <span data-fcount></span><span class="ftoggle__i">+</span></button>
+        <div class="field search">
+          <label for="q">Search</label>
+          <input id="q" type="search" placeholder="e.g. LED driver, VRLA, stator" data-q />
+        </div>
+        {groups.map((g) => (
+          <fieldset>
+            <legend class="mono">{g.label}</legend>
+            <div class="chips">
+              {g.items.map(([k, v]) => <button type="button" class="chip" data-f={g.f} data-v={k} aria-pressed="false">{v}</button>)}
+            </div>
+          </fieldset>
+        ))}
+        <button type="button" class="btn ghost" data-reset>Reset filters ↺</button>
+      </aside>
+      <div>
+        <div class="bar mono"><span><b class="accent" data-count-out>{String(products.length).padStart(2, '0')}</b> / {products.length} products</span><span class="hint">Filters combine. “Must have” requires all selected.</span></div>
+        <div class="grid" data-grid>
+          {sorted.map((p, i) => <ProductCard p={p} idx={i} />)}
+        </div>
+        <div class="empty" data-empty hidden>
+          <p class="h-m">Nothing matches that combination.</p>
+          <p class="lede">We formulate to order. <a class="accent" href="/contact/#enquiry">Describe your application</a> and the lab will propose a grade.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+<style>
+  .finder { padding: 48px 0 120px; }
+  .finder__in { display: grid; gap: 40px; grid-template-columns: 1fr; }
+  @media (min-width: 1000px) { .finder__in { grid-template-columns: 280px 1fr; } .filters { position: sticky; top: 96px; align-self: start; max-height: calc(100vh - 110px); overflow: auto; } }
+  .filters { display: grid; gap: 26px; align-content: start; padding-right: 8px; }
+  .ftoggle { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line-2); cursor: pointer; text-transform: uppercase; letter-spacing: .12em; color: var(--ink); }
+  .ftoggle [data-fcount] { color: var(--accent); margin-right: auto; margin-left: 10px; }
+  .ftoggle__i { transition: transform .4s var(--ease); font-size: 1rem; }
+  @media (max-width: 999px) {
+    .filters:not(.open) > :not(.ftoggle) { display: none; }
+    .filters.open .ftoggle__i { transform: rotate(45deg); }
+  }
+  @media (min-width: 1000px) { .ftoggle { display: none; } }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; }
+  legend { color: var(--ink-3); text-transform: uppercase; letter-spacing: .14em; font-size: .66rem; margin-bottom: 10px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips .chip { cursor: pointer; background: transparent; transition: all .25s; }
+  .chips .chip:hover { border-color: var(--ink-2); color: var(--ink); }
+  .chips .chip.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .bar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--ink-3); padding-bottom: 16px; margin-bottom: 20px; border-bottom: 1px solid var(--line-2); }
+  .bar b { font-size: 1.1rem; }
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); position: relative; }
+  .empty { padding: 60px 0; }
+</style>

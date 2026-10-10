@@ -1,18 +1,10 @@
 ---
-import Base from '../layouts/Base.astro';
-import IsoPlant from '../components/iso/IsoPlant.astro';
-import Enquiry from '../components/Enquiry.astro';
-import { company, timeline, capabilities, testimonials } from '../data/site';
+import AboutPage from '../../layouts/AboutPage.astro';
+import IsoPlant from '../../components/iso/IsoPlant.astro';
+import { company, timeline, capabilities } from '../../data/site';
 ---
-<Base title="Company: 30+ years of thermoset formulation" description="Electrocoating & Insulation Technologies Pvt. Ltd. (EITPL), Pune: epoxy, polyurethane, phenolic and silicone resin formulations for electrical insulation. Two plants, 20 t/day, ISO 9001:2015.">
-  <section class="phead">
-    <div class="wrap">
-      <div class="crumbs"><a href="/">Home</a><span>/</span><span>Company</span></div>
-      <p class="eyebrow">About EITPL</p>
-      <h1 class="h-xl" data-split>Formulators <span class="outline">first.</span></h1>
-      <p class="lede">We manufacture and sell epoxy resins, hardeners, polyurethane and resin formulations, and have spent more than 30 years formulating them for electrical and electronic insulation.</p>
-    </div>
-  </section>
+<AboutPage title="Company profile: 30+ years of thermoset formulation" description="Electrocoating & Insulation Technologies Pvt. Ltd. (EITPL), Pune: epoxy, polyurethane, phenolic and silicone resin formulations for electrical insulation. Two plants, 20 t/day, ISO 9001:2015." eyebrow="Company profile" lede="We manufacture and sell epoxy resins, hardeners, polyurethane and resin formulations, and have spent more than 30 years formulating them for electrical and electronic insulation.">
+  <Fragment slot="title">Formulators <span class="outline">first.</span></Fragment>
 
   <section class="section">
     <div class="wrap split">
@@ -59,22 +51,7 @@ import { company, timeline, capabilities, testimonials } from '../data/site';
     </div>
   </section>
 
-  <section class="section lead" id="leadership">
-    <div class="wrap split">
-      <div>
-        <p class="eyebrow" data-reveal>Leadership</p>
-        <h2 class="h-l" data-split>{company.md}</h2>
-        <p class="mono accent" data-reveal>Managing Director</p>
-      </div>
-      <div class="prose" data-reveal>
-        <p>The company is run by experienced professionals at every level, with in-depth process knowledge and close attention to customer requirements. Alongside quality for customers, we treat skills development and growth for our own people as a priority.</p>
-        <blockquote class="pull">“{testimonials[1].q}”<footer class="mono">{testimonials[1].n} · {testimonials[1].c}</footer></blockquote>
-      </div>
-    </div>
-  </section>
-
-  <Enquiry />
-</Base>
+</AboutPage>
 <style>
   .prose p { color: var(--ink-2); font-size: 1.05rem; max-width: 62ch; }
   .prose .big { color: var(--ink); font-size: clamp(1.2rem, 1.8vw, 1.5rem); line-height: 1.45; }
@@ -92,7 +69,4 @@ import { company, timeline, capabilities, testimonials } from '../data/site';
   .tl__y { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900; font-stretch: 125%; line-height: 1; color: transparent; -webkit-text-stroke: 1px var(--accent); }
   .tl__list h3 { font-size: 1.35rem; font-stretch: 112%; }
   .tl__list p { color: var(--ink-2); margin: 6px 0 0; }
-  .lead { border-top: 1px solid var(--line-2); }
-  .pull { margin: 28px 0 0; padding: 22px 0 0 22px; border-left: 1px solid var(--accent); color: var(--ink); font-size: 1.1rem; }
-  .pull footer { color: var(--ink-3); margin-top: 12px; }
 </style>

@@ -1,7 +1,7 @@
 ---
 /** Primary navigation. Labels, order and dropdowns match the original site's menu. */
 import { menu, company } from '../data/site';
-import { APPLICATIONS, products } from '../data/products';
+import { APPLICATIONS, appHref, products, type App } from '../data/products';
 const path = Astro.url.pathname;
 const isOn = (href: string) => (href === '/' ? path === '/' : path.startsWith(href.split('#')[0]));
 const index = [
@@ -28,7 +28,7 @@ const index = [
               <p class="eyebrow">By application</p>
               <ul>
                 {Object.entries(APPLICATIONS).map(([k, v]) => (
-                  <li><a href={`/products/?app=${k}`}><span>{v.label}</span><i aria-hidden="true">→</i></a></li>
+                  <li><a href={appHref(k as App)}><span>{v.label}</span><i aria-hidden="true">→</i></a></li>
                 ))}
               </ul>
               <a class="btn solid" href="/products/">All products <span class="arr">→</span></a>
