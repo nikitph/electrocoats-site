@@ -4,7 +4,6 @@ import { menu, company } from '../data/site';
 import { APPLICATIONS, products } from '../data/products';
 const path = Astro.url.pathname;
 const isOn = (href: string) => (href === '/' ? path === '/' : path.startsWith(href.split('#')[0]));
-const count = (k: string) => products.filter((p) => p.apps.includes(k as any)).length;
 const index = [
   ...products.map((p) => ({ t: p.name, s: p.summary, h: `/products/${p.slug}/`, k: 'Product' })),
   ...menu.flatMap((m) => (m.children ?? [m]).map((c) => ({ t: c.label, s: '', h: c.href, k: 'Page' }))),
@@ -16,20 +15,20 @@ const index = [
       <span class="logo-plate"><img src="/img/logo.svg" alt={company.name} width="359" height="101" /></span>
     </a>
     <nav class="links" aria-label="Primary">
-      {menu.map((m, mi) => (
+      {menu.map((m) => (
         <div class:list={['li', { drop: m.children || m.mega }]}>
           <a href={m.href} class:list={[{ on: isOn(m.href) }]}>
-            <sup>0{mi + 1}</sup>{m.label}{(m.children || m.mega) && <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" /></svg>}
+            {m.label}{(m.children || m.mega) && <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" /></svg>}
           </a>
           {m.children && (
-            <div class="menu"><ul class="menu__in">{m.children.map((c, ci) => <li><a href={c.href}><span class="mono">{String(ci + 1).padStart(2, '0')}</span>{c.label}<i aria-hidden="true">→</i></a></li>)}</ul></div>
+            <div class="menu"><ul class="menu__in">{m.children.map((c) => <li><a href={c.href}>{c.label}<i aria-hidden="true">→</i></a></li>)}</ul></div>
           )}
           {m.mega && (
             <div class="menu"><div class="menu__in mega">
               <p class="eyebrow">By application</p>
               <ul>
                 {Object.entries(APPLICATIONS).map(([k, v]) => (
-                  <li><a href={`/products/?app=${k}`}><span>{v.label}</span><span class="mono">{String(count(k)).padStart(2, '0')}</span></a></li>
+                  <li><a href={`/products/?app=${k}`}><span>{v.label}</span><i aria-hidden="true">→</i></a></li>
                 ))}
               </ul>
               <a class="btn solid" href="/products/">All products <span class="arr">→</span></a>
@@ -85,14 +84,12 @@ const index = [
     font-family: var(--mono); font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2);
     transition: color .25s, background .25s;
   }
-  .li > a sup { font-size: .55rem; color: var(--ink-3); letter-spacing: 0; transform: translateY(-3px); transition: color .25s; }
   .li > a::before, .li > a::after { content: ''; position: absolute; width: 7px; height: 7px; border: 0 solid var(--accent); opacity: 0; transition: opacity .25s, transform .35s var(--ease); }
   .li > a::before { top: 3px; left: 3px; border-width: 1px 0 0 1px; transform: translate(4px, 4px); }
   .li > a::after { bottom: 3px; right: 3px; border-width: 0 1px 1px 0; transform: translate(-4px, -4px); }
   .li > a:hover, .drop:focus-within > a, .drop:hover > a { color: var(--heading); background: var(--bg-2); }
   .li > a:hover::before, .li > a:hover::after, .drop:hover > a::before, .drop:hover > a::after { opacity: 1; transform: none; }
   .li > a.on { color: var(--heading); }
-  .li > a.on sup { color: var(--accent); }
   .li > a.on::after { opacity: 1; transform: none; width: 4px; height: 4px; border: 0; border-radius: 50%; background: var(--accent); bottom: 4px; right: 50%; }
   .chev { width: 8px; height: 5px; fill: none; stroke: currentColor; stroke-width: 1.4; transition: transform .3s var(--ease); }
   .drop:hover .chev, .drop:focus-within .chev { transform: rotate(180deg); }
@@ -104,15 +101,15 @@ const index = [
   .menu__in > li { opacity: 0; transform: translateX(-6px); transition: opacity .3s, transform .4s var(--ease); }
   .drop:hover .menu__in > li, .drop:focus-within .menu__in > li { opacity: 1; transform: none; }
   .menu__in > li:nth-child(2) { transition-delay: .03s; } .menu__in > li:nth-child(3) { transition-delay: .06s; } .menu__in > li:nth-child(4) { transition-delay: .09s; } .menu__in > li:nth-child(5) { transition-delay: .12s; } .menu__in > li:nth-child(6) { transition-delay: .15s; }
-  .menu__in > li > a { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; padding: 11px 12px; font-weight: 600; font-stretch: 106%; color: var(--ink); transition: background .2s, color .2s; }
-  .menu__in > li > a .mono { color: var(--ink-3); font-size: .64rem; }
+  .menu__in > li > a { display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 11px 12px; font-weight: 600; font-stretch: 106%; color: var(--ink); transition: background .2s, color .2s; }
   .menu__in > li > a i { font-style: normal; color: var(--accent); opacity: 0; transform: translateX(-6px); transition: all .3s var(--ease); }
   .menu__in > li > a:hover { background: var(--bg-2); color: var(--heading); }
   .menu__in > li > a:hover i { opacity: 1; transform: none; }
   .mega { width: 360px; padding: 18px; display: grid; gap: 12px; }
   .mega ul { list-style: none; margin: 0; padding: 0; }
   .mega li a { display: flex; justify-content: space-between; padding: 10px 2px; border-bottom: 1px solid var(--line-3); font-weight: 600; font-stretch: 106%; color: var(--ink); transition: color .2s, padding .3s var(--ease); }
-  .mega li a .mono { color: var(--ink-3); }
+  .mega li a i { font-style: normal; color: var(--accent); opacity: 0; transition: opacity .3s; }
+  .mega li a:hover i { opacity: 1; }
   .mega li a:hover { color: var(--accent); padding-left: 8px; }
 
   .search-btn {
